@@ -2,6 +2,8 @@ package com.younchen.younsampleproject.commons.bean;
 
 import android.app.Activity;
 
+import com.younchen.younsampleproject.sys.pic.MessengerSampleActivity;
+
 
 /**
  * Created by 龙泉 on 2016/7/21.
@@ -15,6 +17,8 @@ public class ActivityBean {
         this.activity = activityClass;
         this.description = ui;
     }
+
+
 
     public Class<Activity> getActivity() {
         return activity;

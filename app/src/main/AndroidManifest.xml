@@ -16,8 +16,32 @@
             </intent-filter>
         </activity>
         <activity android:name=".commons.activity.UiActivity" />
-        <activity android:name=".ui.layout.activity.CustomLayoutActivity"></activity>
-        <activity android:name=".ui.blurimage.BlurImageActivity"></activity>
+        <activity android:name=".commons.activity.SysActivity" />
+        <!--ui-->
+        <activity android:name=".ui.layout.activity.CustomLayoutActivity" />
+        <activity android:name=".ui.blurimage.BlurImageActivity" />
+        <!--sys-->
+        <activity android:name=".sys.pic.AidlSampleActivity" />
+        <activity android:name=".sys.pic.IPCSampleListActivity" />
+        <activity android:name=".sys.pic.MessengerSampleActivity" />
+        <activity android:name=".sys.pic.AidlCallBackSampleActivity" />
+
+        <service
+            android:name=".sys.pic.AidlSampleService"
+            android:enabled="true"
+            android:exported="true"
+            android:process=":remoto" />
+        <service
+            android:name=".sys.pic.MessengerSampleService"
+            android:enabled="true"
+            android:exported="true"
+            android:process=":messanger" />
+
+        <service
+            android:name=".sys.pic.AidlCallBackService"
+            android:enabled="true"
+            android:exported="true"
+            android:process=":remoto"/>
     </application>
 
 </manifest>

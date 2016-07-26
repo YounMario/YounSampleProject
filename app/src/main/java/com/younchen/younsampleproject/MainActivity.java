@@ -1,30 +1,25 @@
 package com.younchen.younsampleproject;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 
+import com.younchen.younsampleproject.commons.activity.BaseListActivity;
+import com.younchen.younsampleproject.commons.activity.SysActivity;
 import com.younchen.younsampleproject.commons.activity.UiActivity;
 import com.younchen.younsampleproject.commons.adapter.ActivityItemAdapter;
 import com.younchen.younsampleproject.commons.bean.ActivityBean;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseListActivity {
 
-    private RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        init();
     }
 
-    private void init() {
-        recyclerView = (RecyclerView) findViewById(R.id.recycleList);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        ActivityItemAdapter adapter = new ActivityItemAdapter(MainActivity.this);
+    @Override
+    public void initAdapter(ActivityItemAdapter adapter) {
         adapter.add(new ActivityBean(UiActivity.class,"UI"));
-        recyclerView.setAdapter(adapter);
+        adapter.add(new ActivityBean(SysActivity.class,"System"));
     }
+
 }
