@@ -6,7 +6,7 @@ import android.view.View;
 
 import com.younchen.younsampleproject.R;
 import com.younchen.younsampleproject.commons.bean.ActivityBean;
-import com.younchen.younsampleproject.commons.holder.BaseHolder;
+import com.younchen.younsampleproject.commons.holder.ViewHolder;
 
 /**
  * Created by 龙泉 on 2016/7/21.
@@ -18,7 +18,7 @@ public class ActivityItemAdapter extends BaseAdapter<ActivityBean> {
     }
 
     @Override
-    public void covert(BaseHolder holder, final ActivityBean item) {
+    public void covert(ViewHolder holder, final ActivityBean item) {
         holder.setText(R.id.content, item.getDescription());
         holder.setOnItemClickListener(new View.OnClickListener() {
             @Override

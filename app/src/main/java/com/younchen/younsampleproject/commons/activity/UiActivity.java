@@ -4,6 +4,7 @@ import android.os.Bundle;
 
 import com.younchen.younsampleproject.commons.adapter.ActivityItemAdapter;
 import com.younchen.younsampleproject.commons.bean.ActivityBean;
+import com.younchen.younsampleproject.ui.activity.MulitTypeListItemSampleActivity;
 import com.younchen.younsampleproject.ui.layout.activity.CustomLayoutActivity;
 
 public class UiActivity extends BaseListActivity {
@@ -17,5 +18,6 @@ public class UiActivity extends BaseListActivity {
     @Override
     public void initAdapter(ActivityItemAdapter adapter) {
         adapter.add(new ActivityBean(CustomLayoutActivity.class,"Pullable Layout"));
+        adapter.add(new ActivityBean(MulitTypeListItemSampleActivity.class,"mulit type list"));
     }
 }

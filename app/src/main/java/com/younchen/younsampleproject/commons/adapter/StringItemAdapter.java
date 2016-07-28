@@ -5,7 +5,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.younchen.younsampleproject.R;
-import com.younchen.younsampleproject.commons.holder.BaseHolder;
+import com.younchen.younsampleproject.commons.holder.ViewHolder;
 
 /**
  * Created by 龙泉 on 2016/7/21.
@@ -17,7 +17,7 @@ public class StringItemAdapter extends BaseAdapter<String> {
     }
 
     @Override
-    public void covert(BaseHolder holder, final String item) {
+    public void covert(ViewHolder holder, final String item) {
         holder.setText(R.id.content,item);
         holder.setOnItemClickListener(new View.OnClickListener() {
             @Override

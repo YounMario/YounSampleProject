@@ -17,10 +17,10 @@
         </activity>
         <activity android:name=".commons.activity.UiActivity" />
         <activity android:name=".commons.activity.SysActivity" />
-        <!--ui-->
+        <!-- ui -->
         <activity android:name=".ui.layout.activity.CustomLayoutActivity" />
         <activity android:name=".ui.blurimage.BlurImageActivity" />
-        <!--sys-->
+        <!-- sys -->
         <activity android:name=".sys.pic.AidlSampleActivity" />
         <activity android:name=".sys.pic.IPCSampleListActivity" />
         <activity android:name=".sys.pic.MessengerSampleActivity" />
@@ -36,12 +36,13 @@
             android:enabled="true"
             android:exported="true"
             android:process=":messanger" />
-
         <service
             android:name=".sys.pic.AidlCallBackService"
             android:enabled="true"
             android:exported="true"
-            android:process=":remoto"/>
+            android:process=":remoto" />
+
+        <activity android:name=".ui.activity.MulitTypeListItemSampleActivity"></activity>
     </application>
 
 </manifest>

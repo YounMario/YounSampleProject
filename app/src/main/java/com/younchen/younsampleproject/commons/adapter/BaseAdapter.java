@@ -6,14 +6,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.younchen.younsampleproject.commons.holder.BaseHolder;
+import com.younchen.younsampleproject.commons.holder.ViewHolder;
 
 import java.util.LinkedList;
 
 /**
  * Created by 龙泉 on 2016/7/21.
  */
-public abstract class BaseAdapter<T> extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public abstract class BaseAdapter<T> extends RecyclerView.Adapter<ViewHolder> {
 
     protected LinkedList<T> data;
     protected Context context;
@@ -41,20 +41,28 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<RecyclerView.V
         notifyDataSetChanged();
     }
 
-
-    @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View itemView = LayoutInflater.from(context).inflate(layoutId, parent,false);
-        return new BaseHolder(itemView);
+    public T getItem(int postion){
+       return data.get(postion);
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
-        BaseHolder baseHolder = (BaseHolder) holder;
-        covert(baseHolder, data.get(position));
+    public int getItemViewType(int position) {
+        return super.getItemViewType(position);
     }
 
-    public abstract void covert(BaseHolder holder, T item);
+    @Override
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        return ViewHolder.get(parent,layoutId);
+    }
+
+    @Override
+    public void onBindViewHolder(ViewHolder holder, final int position) {
+        covert(holder, data.get(position));
+    }
+
+    public abstract void covert(ViewHolder holder, T item);
+
+
 
     @Override
     public int getItemCount() {
