@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">YounSampleProject</string>
+    <string name="tip_string">must keep our</string>
+    <string name="license">lisence</string>
 </resources>

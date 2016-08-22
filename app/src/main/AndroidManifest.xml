@@ -18,7 +18,7 @@
         <activity android:name=".commons.activity.UiActivity" />
         <activity android:name=".commons.activity.SysActivity" />
         <!-- ui -->
-        <activity android:name=".ui.layout.activity.CustomLayoutActivity" />
+        <activity android:name=".ui.activity.CustomLayoutActivity" />
         <activity android:name=".ui.blurimage.BlurImageActivity" />
         <!-- sys -->
         <activity android:name=".sys.pic.AidlSampleActivity" />
@@ -42,7 +42,12 @@
             android:exported="true"
             android:process=":remoto" />
 
-        <activity android:name=".ui.activity.MulitTypeListItemSampleActivity"></activity>
+        <activity android:name=".ui.activity.MulitTypeListItemSampleActivity" />
+        <activity android:name=".ui.activity.ScrollerViewSampleActivity" />
+        <activity android:name=".ui.activity.AnimationActivity" />
+        <activity android:name=".ui.activity.SvgIconSampleActivity" />
+        <activity android:name=".commons.activity.RxJavaActivity" />
+        <activity android:name=".rxjava.activity.ObserverSampleActivity"></activity>
     </application>
 
 </manifest>
