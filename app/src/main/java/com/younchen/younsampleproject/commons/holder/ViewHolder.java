@@ -16,6 +16,7 @@ public class ViewHolder extends RecyclerView.ViewHolder {
     private View rootView;
     private SparseArray<View> mViews;
 
+
     public static ViewHolder get(ViewGroup parent, int layoutId) {
         View itemView = LayoutInflater.from(parent.getContext()).inflate(layoutId, parent, false);
         return new ViewHolder(itemView);
@@ -48,5 +49,9 @@ public class ViewHolder extends RecyclerView.ViewHolder {
 
     public void setOnItemClickListener(View.OnClickListener onClickListener) {
         rootView.setOnClickListener(onClickListener);
+    }
+
+    public View getItemView(){
+        return rootView;
     }
 }

@@ -1,0 +1,29 @@
+package com.younchen.younsampleproject.ui.activity;
+
+import android.view.View;
+
+/**
+ * Created by 龙泉 on 2016/10/18.
+ */
+public interface Player {
+
+    boolean isPlayable();
+
+    boolean canPlay();
+
+    boolean isPlaying();
+
+    void saveCurrentState();
+
+    void stopPlaying();
+
+    View getPlayerView();
+
+    void play();
+
+    String getPlayerId();
+
+    int getItemPosition();
+
+    void setItemPosition(int i);
+}

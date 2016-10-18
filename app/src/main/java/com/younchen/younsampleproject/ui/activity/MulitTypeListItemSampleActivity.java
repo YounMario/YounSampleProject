@@ -1,32 +1,67 @@
 package com.younchen.younsampleproject.ui.activity;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 
 import com.younchen.younsampleproject.R;
-import com.younchen.younsampleproject.commons.adapter.MulitTypeAdapter;
-import com.younchen.younsampleproject.commons.adapter.MulitTypeAdapterSupport;
-import com.younchen.younsampleproject.ui.adapter.MulitSampleAdapter;
-import com.younchen.younsampleproject.ui.bean.ChatMessage;
+import com.younchen.younsampleproject.ui.adapter.VideoAdapter;
+import com.younchen.younsampleproject.ui.adapter.VideoInfo;
+import com.younchen.younsampleproject.ui.widget.UltimateRecyclerView;
 
 public class MulitTypeListItemSampleActivity extends AppCompatActivity {
 
-    private RecyclerView listView;
+    private UltimateRecyclerView listView;
+    private VideoAdapter adapter;
+    private Handler handler;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mulit_type_list_item_sample);
-        listView = (RecyclerView) findViewById(R.id.listView);
+        listView = (UltimateRecyclerView) findViewById(R.id.listView);
+        handler = new Handler();
 
-        MulitTypeAdapter adapter = new MulitSampleAdapter(this);
-        adapter.add(new ChatMessage(ChatMessage.TYPE_TEXT, "fuck up"));
-        adapter.add(new ChatMessage(ChatMessage.TYPE_IMG, "lets it be"));
 
         listView.setLayoutManager(new LinearLayoutManager(this));
-        listView.setAdapter(adapter);
 
+
+        adapter = new VideoAdapter(this);
+        listView.addOnScrollListener(new VideoListScrollListener(listView.get(), adapter));
+        loadDate();
+        listView.setLoadMoreView(R.layout.layout_load_more);
+        listView.setAdapter(adapter);
+        listView.reenableLoadmore();
+
+        listView.setOnLoadMoreListener(new UltimateRecyclerView.OnLoadMoreListener() {
+            @Override
+            public void loadMore(int itemsCount, int maxLastVisiblePosition) {
+                handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        loadDate();
+                    }
+                }, 1000);
+            }
+        });
+
+
+        listView.enableDefaultSwipeRefresh(true);
+        listView.setDefaultOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                adapter.clear();
+            }
+        });
     }
+
+    private void loadDate() {
+        for (int i = 0; i < 10; i++) {
+            adapter.add(new VideoInfo());
+        }
+    }
+
+
 }
