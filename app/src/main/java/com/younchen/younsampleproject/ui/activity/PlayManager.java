@@ -6,15 +6,11 @@ package com.younchen.younsampleproject.ui.activity;
 
 public interface PlayManager {
 
-     Player getCurrentPlayer();
-
     void play();
 
-    void setCurrentPlayer(Player selectedPlayer, int itemPosition);
-
-    void saveState(String playerId);
-
-    void restoreState(String playerId);
+    void setCurrentPlay(int index);
 
     void stopPlay();
+
+    int getCurrentPlayIndex();
 }

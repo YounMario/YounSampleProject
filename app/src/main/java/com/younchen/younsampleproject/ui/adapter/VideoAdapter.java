@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import com.younchen.younsampleproject.R;
 import com.younchen.younsampleproject.commons.holder.ViewHolder;
 import com.younchen.younsampleproject.ui.activity.PlayManager;
-import com.younchen.younsampleproject.ui.activity.Player;
 import com.younchen.younsampleproject.ui.holder.VideoViewHolder;
 import com.younchen.younsampleproject.ui.widget.FooterHolder;
 import com.younchen.younsampleproject.ui.widget.HeadHolder;
@@ -26,9 +25,14 @@ public class VideoAdapter extends NBaseAdapter<VideoInfo> implements PlayManager
     private static String TAG ="VideoAdapter";
 
     private int[] colors = {Color.BLUE, Color.GRAY, Color.GREEN};
-    private Player currentPlayer;
 
     private int currentPlayingPostion = 0;
+    private boolean isPlaying = false;
+    private ItemState currentState;
+
+    enum ItemState {
+        NOMAL, PALY;
+    }
 
     public VideoAdapter(Context context) {
         super(context, R.layout.item_video);
@@ -49,20 +53,28 @@ public class VideoAdapter extends NBaseAdapter<VideoInfo> implements PlayManager
         holder.setText(R.id.txt_num, String.valueOf(position));
         View back = holder.getView(R.id.contain);
         back.setBackgroundColor(colors[position % colors.length]);
+        if (currentPlayingPostion == position && isPlaying) {
+            holder.setText(R.id.txt_num, "playing");
+        }
     }
 
 
-    @Override
-    public Player getCurrentPlayer() {
-        return currentPlayer;
-    }
 
     @Override
     public void play() {
-        if (currentPlayer != null) {
-            currentPlayer.play();
-        }
         Log.i(TAG, "playing position:" + currentPlayingPostion);
+        setCurrentState(ItemState.PALY);
+        notifyItemChanged(currentPlayingPostion);
+        isPlaying = true;
+    }
+
+    private void setCurrentState(ItemState currentState) {
+        this.currentState = currentState;
+    }
+
+    @Override
+    public void setCurrentPlay(int index) {
+        this.currentPlayingPostion = index;
     }
 
     @Override
@@ -71,27 +83,19 @@ public class VideoAdapter extends NBaseAdapter<VideoInfo> implements PlayManager
         return new VideoViewHolder(itemView);
     }
 
-    @Override
-    public void setCurrentPlayer(Player selectedPlayer, int itemPosition) {
-        this.currentPlayer = selectedPlayer;
-        this.currentPlayingPostion = itemPosition;
-    }
 
-    @Override
-    public void saveState(String playerId) {
-
-    }
-
-    @Override
-    public void restoreState(String playerId) {
-
-    }
 
     @Override
     public void stopPlay() {
-        if (currentPlayer != null) {
-            currentPlayer.stopPlaying();
-            Log.i(TAG, "stop play position:" + currentPlayingPostion);
-        }
+        Log.i(TAG, "stop play position:" + currentPlayingPostion);
+        setCurrentState(ItemState.NOMAL);
+        notifyItemChanged(currentPlayingPostion);
+        currentPlayingPostion = -1;
+        isPlaying = false;
+    }
+
+    @Override
+    public int getCurrentPlayIndex() {
+        return currentPlayingPostion;
     }
 }

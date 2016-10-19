@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import com.younchen.younsampleproject.R;
 import com.younchen.younsampleproject.commons.holder.ViewHolder;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 /**
@@ -16,24 +17,18 @@ import java.util.LinkedList;
  */
 public abstract class NBaseAdapter<T> extends UltimateViewAdapter<ViewHolder> {
 
-    protected LinkedList<T> data;
+    protected ArrayList<T> data;
     protected Context context;
     protected int layoutId;
 
     public NBaseAdapter(Context context, int layoutId) {
-        data = new LinkedList<>();
+        data = new ArrayList<>();
         this.context = context;
         this.layoutId = layoutId;
     }
 
     public void add(T item) {
-        data.addLast(item);
-        notifyDataSetChanged();
-    }
-
-    public void addFirst(T item) {
-        data.addFirst(item);
-        notifyDataSetChanged();
+        insertLastInternal(data,item);
     }
 
     public void clear() {

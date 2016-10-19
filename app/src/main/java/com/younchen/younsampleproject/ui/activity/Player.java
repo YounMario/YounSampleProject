@@ -7,23 +7,10 @@ import android.view.View;
  */
 public interface Player {
 
-    boolean isPlayable();
 
     boolean canPlay();
 
-    boolean isPlaying();
-
-    void saveCurrentState();
-
-    void stopPlaying();
 
     View getPlayerView();
 
-    void play();
-
-    String getPlayerId();
-
-    int getItemPosition();
-
-    void setItemPosition(int i);
 }

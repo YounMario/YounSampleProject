@@ -2,10 +2,10 @@ package com.younchen.younsampleproject.ui.activity;
 
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by 龙泉 on 2016/10/18.
@@ -14,14 +14,17 @@ import java.util.List;
 public class VideoListScrollListener extends RecyclerView.OnScrollListener {
 
     private RecyclerView parent;
-    private List<Player> playable;
 
     private PlayManager playManager;
+    private ArrayList<Integer> playbleIndexs;
+
+    private final String TAG  = "Scrollistener";
+
 
     public VideoListScrollListener(RecyclerView parent,PlayManager playManager){
         this.parent = parent;
-        this.playable = new ArrayList<>();
         this.playManager = playManager;
+        playbleIndexs = new ArrayList<>();
     }
 
     @Override
@@ -33,13 +36,8 @@ public class VideoListScrollListener extends RecyclerView.OnScrollListener {
             return;
         }
 
-        playable.clear();
-        Player currentPlayer = playManager.getCurrentPlayer();
-        if (currentPlayer != null && currentPlayer.isPlaying()) {
-            if (currentPlayer.canPlay() && currentPlayer.isPlayable()) {
-                playable.add(currentPlayer);
-            }
-        }
+        playbleIndexs.clear();
+        int currentPlayIndex = playManager.getCurrentPlayIndex();
 
         int firstPosition = RecyclerView.NO_POSITION;
         int lastPosition = RecyclerView.NO_POSITION;
@@ -54,42 +52,37 @@ public class VideoListScrollListener extends RecyclerView.OnScrollListener {
             RecyclerView.ViewHolder holder = parent.findViewHolderForAdapterPosition(i);
             if (holder instanceof Player) {
                 Player player = (Player) holder;
-                if (player.canPlay() && player.isPlayable()) {
-                    player.setItemPosition(i);
-                    playable.add(player);
+                if (player.canPlay()) {
+                    playbleIndexs.add(i);
                 }
             }
         }
 
         //
-        Player selectedPlayer = findNeedPlay(playable);
+        int canPlayIndex = findNeedPlay();
 
-        if(selectedPlayer == currentPlayer){
-            if (selectedPlayer != null && !selectedPlayer.isPlaying()) {
-                playManager.restoreState(currentPlayer.getPlayerId());
-                playManager.play();
-            }
+
+        if (canPlayIndex != -1 && canPlayIndex == currentPlayIndex) {
+            Log.i(TAG, "notify play current");
+            playManager.play();
             return;
         }
 
-        if (currentPlayer != null && currentPlayer.isPlaying()) {
-            playManager.saveState(currentPlayer.getPlayerId());
+        if (currentPlayIndex != -1){
+            Log.i(TAG, "notify stop current");
             playManager.stopPlay();
         }
 
-        if (selectedPlayer == null) {
+        if (canPlayIndex == -1) {
             return;
         }
 
-        playManager.setCurrentPlayer(selectedPlayer, selectedPlayer.getItemPosition());
+        playManager.setCurrentPlay(canPlayIndex);
         playManager.play();
     }
 
-    private Player findNeedPlay(List<Player> playable) {
-        if (playable.size() == 0) {
-            return null;
-        }
-        return playable.get(0);
+    private int findNeedPlay() {
+        return playbleIndexs.size() == 0 ? -1 : playbleIndexs.get(0);
     }
 
 }
