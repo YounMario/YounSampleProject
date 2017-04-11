@@ -20,34 +20,34 @@ public class MulitSampleAdapter extends MulitTypeAdapter<ChatMessage> {
     }
 
     private void init() {
-        MulitTypeAdapterSupport support = new MulitTypeAdapterSupport() {
-            @Override
-            public int getType(int position) {
-                return getItem(position).getType() ;
-            }
-
-            @Override
-            public int layoutId(int type) {
-                switch (type){
-                    case ChatMessage.TYPE_IMG:
-                        return R.layout.item_image;
-                    case ChatMessage.TYPE_TEXT:
-                        return R.layout.item_txt;
-                    default:
-                        return -1;
-                }
-            }
-        };
-        setMulitTypeAdapterSupport(support);
+//        MulitTypeAdapterSupport support = new MulitTypeAdapterSupport() {
+//            @Override
+//            public int getType(int position) {
+//                return getItem(position).getType() ;
+//            }
+//
+//            @Override
+//            public int layoutId(int type) {
+//                switch (type){
+//                    case ChatMessage.TYPE_IMG:
+//                        return R.layout.item_image;
+//                    case ChatMessage.TYPE_TEXT:
+//                        return R.layout.item_txt;
+//                    default:
+//                        return -1;
+//                }
+//            }
+//        };
+//        setMulitTypeAdapterSupport(support);
     }
 
 
     @Override
     public void covert(ViewHolder holder, ChatMessage item) {
-        if (item.getType() == ChatMessage.TYPE_IMG) {
-            holder.setImage(R.id.img_view,R.drawable.tab);
-        } else if (item.getType() == ChatMessage.TYPE_TEXT) {
-            holder.setText(R.id.txt_content,item.getMsg());
-        }
+//        if (item.getType() == ChatMessage.TYPE_IMG) {
+//            holder.setImage(R.id.img_view,R.drawable.tab);
+//        } else if (item.getType() == ChatMessage.TYPE_TEXT) {
+//            holder.setText(R.id.txt_content,item.getMsg());
+//        }
     }
 }
