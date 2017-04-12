@@ -6,16 +6,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.younchen.younsampleproject.commons.fragment.Frag;
 import com.younchen.younsampleproject.commons.holder.ViewHolder;
 
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by 龙泉 on 2016/7/21.
  */
 public abstract class BaseAdapter<T> extends RecyclerView.Adapter<ViewHolder> {
 
-    protected LinkedList<T> data;
+    protected List<T> data;
     protected Context context;
     protected int layoutId;
 
@@ -27,13 +29,13 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<ViewHolder> {
     }
 
     public void add(T item) {
-        data.addLast(item);
-        notifyDataSetChanged();
+        data.add(item);
+        notifyItemChanged(getItemCount() - 1);
     }
 
     public void addFirst(T item) {
-        data.addFirst(item);
-        notifyDataSetChanged();
+        data.add(0, item);
+        notifyItemChanged(0);
     }
 
     public void clear() {
@@ -41,9 +43,10 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<ViewHolder> {
         notifyDataSetChanged();
     }
 
-    public T getItem(int postion){
-       return data.get(postion);
+    public T getItem(int postion) {
+        return data.get(postion);
     }
+
 
     @Override
     public int getItemViewType(int position) {
@@ -52,7 +55,7 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<ViewHolder> {
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return ViewHolder.get(parent,layoutId);
+        return ViewHolder.get(parent, layoutId);
     }
 
     @Override
@@ -63,9 +66,13 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<ViewHolder> {
     public abstract void covert(ViewHolder holder, T item);
 
 
-
     @Override
     public int getItemCount() {
         return data.size();
+    }
+
+    public void setData(List<T> data) {
+        this.data = data;
+        notifyDataSetChanged();
     }
 }

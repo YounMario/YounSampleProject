@@ -7,4 +7,9 @@ import com.younchen.younsampleproject.commons.fragment.BaseFragment;
  */
 
 public class RxJavaFragment extends BaseFragment {
+
+    @Override
+    public void onBackKeyPressed() {
+
+    }
 }

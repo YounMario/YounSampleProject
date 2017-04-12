@@ -1,12 +1,52 @@
 package com.younchen.younsampleproject.commons.fragment;
 
-import android.support.v4.app.Fragment;
+
+import android.app.Fragment;
+import android.app.FragmentTransaction;
+import android.os.Bundle;
+import android.view.View;
+
+import com.younchen.younsampleproject.commons.activity.BaseActivity;
 
 /**
  * Created by Administrator on 2017/4/11.
  */
 
-public class BaseFragment extends Fragment{
+public abstract class BaseFragment extends Fragment {
 
+    protected View mRootView;
+
+    public void show(BaseActivity activity) {
+        long currentTime = System.currentTimeMillis();
+        FragmentTransaction transaction = activity.getFragmentManager().beginTransaction();
+        transaction.replace(activity.getFragmentLayoutContainerId(), this);
+        transaction.addToBackStack(BaseFragment.class.getSimpleName() + String.valueOf(currentTime));
+        transaction.commit();
+    }
+
+
+    @Override
+    public void onViewCreated(View view, Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        mRootView = view;
+        mRootView.setFocusableInTouchMode(true);
+        mRootView.requestFocus();
+        //一种监听back键的方法
+//        mRootView.setOnKeyListener(new View.OnKeyListener() {
+//
+//            @Override
+//            public boolean onKey(View v, int keyCode, KeyEvent event) {
+//                if (event.getAction() == KeyEvent.ACTION_DOWN) {
+//                    if (keyCode == KeyEvent.KEYCODE_BACK) {
+//                        onBackKeyPressed();
+//                        return true;
+//                    }
+//                }
+//                return false;
+//            }
+//        });
+    }
+
+    public abstract void onBackKeyPressed();
 
 }

@@ -9,4 +9,8 @@ import com.younchen.younsampleproject.commons.fragment.BaseFragment;
 
 public class PicFragment extends BaseFragment{
 
+    @Override
+    public void onBackKeyPressed() {
+
+    }
 }
