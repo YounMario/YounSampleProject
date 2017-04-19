@@ -14,7 +14,9 @@ import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.service.notification.NotificationListenerService;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.RemoteInput;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.RemoteViews;
@@ -75,89 +77,86 @@ public class NotificationManager {
         return getActionsStr((List) paramBundle.get("actions"));
     }
 
-    private List<Action> getActionsFromNotification(Context paramContext, Notification paramNotification, String paramString) {
-        List<Action> actionList = new ArrayList();
-        try {
-            Field actions = Notification.class.getDeclaredField("actions");
-            if (paramString == null)
-                return actionList;
-            actions.setAccessible(true);
-            paramString = (Notification.Action[]) (Notification.Action[]) actions.get(paramNotification);
-            Object localObject1;
-            int j;
-            int i;
-            Object localObject2;
-            if (paramString != null) {
-                localObject1 = Class.forName("android.app.Notification$Action");
-                j = paramString.length;
-                i = 0;
-                while (i < j) {
-                    localObject2 = paramString[i];
-                    Action localAction = new Action(null);
-                    localAction.icon = ((Class) localObject1).getDeclaredField("icon").getInt(localObject2);
-                    localAction.title = ((String) ((Class) localObject1).getDeclaredField("title").get(localObject2));
-                    localAction.actionIntent = ((PendingIntent) ((Class) localObject1).getDeclaredField("actionIntent").get(localObject2));
-                    paramContext.add(localAction);
-                    i += 1;
-                }
-            }
-            paramNotification = getWearableOptions(paramNotification).getActions().iterator();
-            while (paramNotification.hasNext()) {
-                localObject1 = (NotificationCompat.Action) paramNotification.next();
-                paramString = new Action(null);
-                paramString.icon = ((NotificationCompat.Action) localObject1).icon;
-                paramString.actionIntent = ((NotificationCompat.Action) localObject1).actionIntent;
-                paramString.title = ((NotificationCompat.Action) localObject1).title;
-                paramString.remoteInputs = ((NotificationCompat.Action) localObject1).getRemoteInputs();
-                if (paramString.remoteInputs != null) {
-                    localObject1 = paramString.remoteInputs;
-                    j = localObject1.length;
-                    i = 0;
-                    while (i < j) {
-                        localObject2 = localObject1[i];
-                        Log.e("russell", "input: " + localObject2);
-                        i += 1;
-                    }
-                }
-                paramContext.add(paramString);
-            }
-        } catch (Exception paramNotification) {
-            paramNotification.printStackTrace();
-        }
-        return (List<Action>) paramContext;
-    }
+//    private List<Action> getActionsFromNotification(Context paramContext, Notification paramNotification, String paramString) {
+//        List<Action> actionList = new ArrayList();
+//        try {
+//            Field actions = Notification.class.getDeclaredField("actions");
+//            if (paramString == null)
+//                return actionList;
+//            actions.setAccessible(true);
+//            paramString = (Notification.Action[]) (Notification.Action[]) actions.get(paramNotification);
+//            Object localObject1;
+//            int j;
+//            int i;
+//            Object localObject2;
+//            if (paramString != null) {
+//                localObject1 = Class.forName("android.app.Notification$Action");
+//                j = paramString.length;
+//                i = 0;
+//                while (i < j) {
+//                    localObject2 = paramString[i];
+//                    Action localAction = new Action(null);
+//                    localAction.icon = ((Class) localObject1).getDeclaredField("icon").getInt(localObject2);
+//                    localAction.title = ((String) ((Class) localObject1).getDeclaredField("title").get(localObject2));
+//                    localAction.actionIntent = ((PendingIntent) ((Class) localObject1).getDeclaredField("actionIntent").get(localObject2));
+//                    paramContext.add(localAction);
+//                    i += 1;
+//                }
+//            }
+//            paramNotification = getWearableOptions(paramNotification).getActions().iterator();
+//            while (paramNotification.hasNext()) {
+//                localObject1 = (NotificationCompat.Action) paramNotification.next();
+//                paramString = new Action(null);
+//                paramString.icon = ((NotificationCompat.Action) localObject1).icon;
+//                paramString.actionIntent = ((NotificationCompat.Action) localObject1).actionIntent;
+//                paramString.title = ((NotificationCompat.Action) localObject1).title;
+//                paramString.remoteInputs = ((NotificationCompat.Action) localObject1).getRemoteInputs();
+//                if (paramString.remoteInputs != null) {
+//                    localObject1 = paramString.remoteInputs;
+//                    j = localObject1.length;
+//                    i = 0;
+//                    while (i < j) {
+//                        localObject2 = localObject1[i];
+//                        Log.e("russell", "input: " + localObject2);
+//                        i += 1;
+//                    }
+//                }
+//                paramContext.add(paramString);
+//            }
+//        } catch (Exception paramNotification) {
+//            paramNotification.printStackTrace();
+//        }
+//        return (List<Action>) paramContext;
+//    }
 
     private String getActionsStr(List<?> paramList) {
         if (paramList == null)
             return null;
         StringBuilder localStringBuilder = new StringBuilder();
-        Iterator localIterator = paramList.iterator();
-        if (localIterator.hasNext()) {
-            paramList = localIterator.next();
-            if ((paramList instanceof Notification.Action)) ;
-            for (paramList = toString((Notification.Action) paramList); ; paramList = toString((NotificationCompat.Action) paramList)) {
-                localStringBuilder.append(paramList);
+        for (Object action : paramList) {
+            if ((action instanceof Notification.Action)) {
+                Notification.Action nAction = (Notification.Action) action;
+                localStringBuilder.append(nAction);
                 localStringBuilder.append("\n\n");
-                break;
             }
         }
         return localStringBuilder.toString();
     }
 
-    private Bundle[] getBundleArrayFromBundle(Bundle paramBundle, String paramString) {
-        Object localObject2 = null;
-        Parcelable[] arrayOfParcelable = paramBundle.getParcelableArray(paramString);
-        Object localObject1 = localObject2;
-        if (!(arrayOfParcelable instanceof Bundle[])) {
-            localObject1 = localObject2;
-            if (arrayOfParcelable != null) {
-                localObject1 = Arrays.copyOf((Object[]) arrayOfParcelable, arrayOfParcelable.length,[Landroid.os.Bundle.class)
-                ;
-                paramBundle.putParcelableArray(paramString, (Parcelable[]) (Parcelable[]) localObject1);
-            }
-        }
-        return (Bundle) (Bundle[]) (Bundle[]) localObject1;
-    }
+//    private Bundle[] getBundleArrayFromBundle(Bundle paramBundle, String paramString) {
+//        Object localObject2 = null;
+//        Parcelable[] arrayOfParcelable = paramBundle.getParcelableArray(paramString);
+//        Object localObject1 = localObject2;
+//        if (!(arrayOfParcelable instanceof Bundle[])) {
+//            localObject1 = localObject2;
+//            if (arrayOfParcelable != null) {
+//                localObject1 = Arrays.copyOf((Object[]) arrayOfParcelable, arrayOfParcelable.length,[Landroid.os.Bundle.class)
+//                ;
+//                paramBundle.putParcelableArray(paramString, (Parcelable[]) (Parcelable[]) localObject1);
+//            }
+//        }
+//        return (Bundle) (Bundle[]) (Bundle[]) localObject1;
+//    }
 
     public static NotificationManager getInstance() {
         if (sInstance == null)
@@ -166,46 +165,46 @@ public class NotificationManager {
         return localNotificationManager;
     }
 
-    private void getMultipleNotificationsFromInboxView(RemoteViews paramRemoteViews, Object paramObject) {
-        getNotificationStringFromRemoteViews(paramRemoteViews);
-    }
+//    private void getMultipleNotificationsFromInboxView(RemoteViews paramRemoteViews, Object paramObject) {
+//        getNotificationStringFromRemoteViews(paramRemoteViews);
+//    }
 
-    private HashMap getNotificationStringFromRemoteViews(RemoteViews paramRemoteViews) {
-        HashMap localHashMap = new HashMap();
-        Object localObject1 = null;
-        do
-            try {
-                Object localObject2 = RemoteViews.class.getDeclaredField("mActions");
-                if (localObject2 == null)
-                    continue;
-                ((Field) localObject2).setAccessible(true);
-                localObject1 = ((Field) localObject2).get(paramRemoteViews);
-                continue;
-                paramRemoteViews = ((ArrayList) localObject1).iterator();
-                while (paramRemoteViews.hasNext()) {
-                    localObject2 = paramRemoteViews.next();
-                    localObject1 = Parcel.obtain();
-                    ((Parcelable) localObject2).writeToParcel((Parcel) localObject1, 0);
-                    ((Parcel) localObject1).setDataPosition(0);
-                    if (((Parcel) localObject1).readInt() != 2)
-                        continue;
-                    int i = ((Parcel) localObject1).readInt();
-                    localObject2 = ((Parcel) localObject1).readString();
-                    if (localObject2 == null)
-                        continue;
-                    if (((String) localObject2).equals("setText")) {
-                        ((Parcel) localObject1).readInt();
-                        localHashMap.put(Integer.valueOf(i), TextUtils.CHAR_SEQUENCE_CREATOR.createFromParcel((Parcel) localObject1));
-                    }
-                    ((Parcel) localObject1).recycle();
-                }
-            } catch (Exception paramRemoteViews) {
-                paramRemoteViews.printStackTrace();
-                return localHashMap;
-            }
-        while (localObject1 != null);
-        return (HashMap) (HashMap) localHashMap;
-    }
+//    private HashMap getNotificationStringFromRemoteViews(RemoteViews paramRemoteViews) {
+//        HashMap localHashMap = new HashMap();
+//        Object localObject1 = null;
+//        do
+//            try {
+//                Object localObject2 = RemoteViews.class.getDeclaredField("mActions");
+//                if (localObject2 == null)
+//                    continue;
+//                ((Field) localObject2).setAccessible(true);
+//                localObject1 = ((Field) localObject2).get(paramRemoteViews);
+//                continue;
+//                paramRemoteViews = ((ArrayList) localObject1).iterator();
+//                while (paramRemoteViews.hasNext()) {
+//                    localObject2 = paramRemoteViews.next();
+//                    localObject1 = Parcel.obtain();
+//                    ((Parcelable) localObject2).writeToParcel((Parcel) localObject1, 0);
+//                    ((Parcel) localObject1).setDataPosition(0);
+//                    if (((Parcel) localObject1).readInt() != 2)
+//                        continue;
+//                    int i = ((Parcel) localObject1).readInt();
+//                    localObject2 = ((Parcel) localObject1).readString();
+//                    if (localObject2 == null)
+//                        continue;
+//                    if (((String) localObject2).equals("setText")) {
+//                        ((Parcel) localObject1).readInt();
+//                        localHashMap.put(Integer.valueOf(i), TextUtils.CHAR_SEQUENCE_CREATOR.createFromParcel((Parcel) localObject1));
+//                    }
+//                    ((Parcel) localObject1).recycle();
+//                }
+//            } catch (Exception paramRemoteViews) {
+//                paramRemoteViews.printStackTrace();
+//                return localHashMap;
+//            }
+//        while (localObject1 != null);
+//        return (HashMap) (HashMap) localHashMap;
+//    }
 
     private String getPrivacy(Context paramContext, String paramString) {
         PreferenceManager.getDefaultSharedPreferences(paramContext);
@@ -224,25 +223,25 @@ public class NotificationManager {
         return null;
     }
 
-    private boolean isPersistent(Notification paramNotification, String paramString) {
-        int i;
-        if (((paramNotification.flags & 0x20) == 32) || ((paramNotification.flags & 0x2) == 2)) {
-            i = 1;
-            if (i == 0) {
-                paramNotification = PreferenceManager.getDefaultSharedPreferences(this.mContext);
-                if (paramNotification.getBoolean(paramString + ".showpersistent", false))
-                    break label73;
-            }
-        }
-        label73:
-        do {
-            return false;
-            i = 0;
-            break;
-        }
-        while (paramNotification.getBoolean(paramString + ".catch_all_notifications", true));
-        return false;
-    }
+//    private boolean isPersistent(Notification paramNotification, String paramString) {
+//        int i;
+//        if (((paramNotification.flags & 0x20) == 32) || ((paramNotification.flags & 0x2) == 2)) {
+//            i = 1;
+//            if (i == 0) {
+//                paramNotification = PreferenceManager.getDefaultSharedPreferences(this.mContext);
+//                if (paramNotification.getBoolean(paramString + ".showpersistent", false))
+//                    break label73;
+//            }
+//        }
+//        label73:
+//        do {
+//            return false;
+//            i = 0;
+//            break;
+//        }
+//        while (paramNotification.getBoolean(paramString + ".catch_all_notifications", true));
+//        return false;
+//    }
 
     private void log(String paramString) {
         Log.d("russell", paramString);
@@ -253,9 +252,9 @@ public class NotificationManager {
             return null;
         StringBuilder localStringBuilder = new StringBuilder();
         localStringBuilder.append("SIZE:" + paramMap.size());
-        paramMap = paramMap.entrySet().iterator();
-        while (paramMap.hasNext()) {
-            Map.Entry localEntry = (Map.Entry) paramMap.next();
+        Iterator iterator = paramMap.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry localEntry = (Map.Entry) iterator.next();
             localStringBuilder.append("\n");
             localStringBuilder.append(String.valueOf(localEntry.getKey()));
             localStringBuilder.append(":");
@@ -278,40 +277,41 @@ public class NotificationManager {
         return arrayOfRemoteInput;
     }
 
-    private NotificationCompat.Action parseLegacyWearableAction(Bundle paramBundle) {
-        int i = paramBundle.getInt("icon");
-        Object localObject = paramBundle.getCharSequence("title");
-        Parcelable localParcelable = paramBundle.getParcelable("action_intent");
-        paramBundle = paramBundle.getParcelable("extras");
-        localObject = new NotificationCompat.Action.Builder(i, (CharSequence) localObject, (PendingIntent) localParcelable);
-        if (paramBundle != null) {
-            ((NotificationCompat.Action.Builder) localObject).addExtras((Bundle) paramBundle);
-            paramBundle = parseLegacyRemoteInputBundles(getBundleArrayFromBundle((Bundle) paramBundle, "android.support.wearable.remoteInputs"));
-            if (paramBundle != null) {
-                i = 0;
-                while (i < paramBundle.length) {
-                    ((NotificationCompat.Action.Builder) localObject).addRemoteInput(paramBundle[i]);
-                    i += 1;
-                }
-            }
-        }
-        return (NotificationCompat.Action) ((NotificationCompat.Action.Builder) localObject).build();
-    }
+//    private NotificationCompat.Action parseLegacyWearableAction(Bundle paramBundle) {
+//        int i = paramBundle.getInt("icon");
+//        Object localObject = paramBundle.getCharSequence("title");
+//        Parcelable localParcelable = paramBundle.getParcelable("action_intent");
+//        paramBundle = paramBundle.getParcelable("extras");
+//        localObject = new NotificationCompat.Action.Builder(i, (CharSequence) localObject, (PendingIntent) localParcelable);
+//        if (paramBundle != null) {
+//            ((NotificationCompat.Action.Builder) localObject).addExtras((Bundle) paramBundle);
+//            paramBundle = parseLegacyRemoteInputBundles(getBundleArrayFromBundle((Bundle) paramBundle, "android.support.wearable.remoteInputs"));
+//            if (paramBundle != null) {
+//                i = 0;
+//                while (i < paramBundle.length) {
+//                    ((NotificationCompat.Action.Builder) localObject).addRemoteInput(paramBundle[i]);
+//                    i += 1;
+//                }
+//            }
+//        }
+//        return (NotificationCompat.Action) ((NotificationCompat.Action.Builder) localObject).build();
+//    }
 
-    private void parseNotification(Notification paramNotification, String paramString1, int paramInt, String paramString2, String paramString3, boolean paramBoolean) {
-        if ((paramNotification != null) && (!isPersistent(paramNotification, paramString1)) && (!shouldIgnore(paramString1))) {
-            paramString2 = getPrivacy(this.mContext, paramString1);
-            if ((Build.VERSION.SDK_INT >= 16) && (paramString2.equals("none")))
-                getActionsFromNotification(this.mContext, paramNotification, paramString1);
-        }
-    }
+//    private void parseNotification(Notification paramNotification, String paramString1, int paramInt, String paramString2, String paramString3, boolean paramBoolean) {
+//        if ((paramNotification != null) && (!isPersistent(paramNotification, paramString1)) && (!shouldIgnore(paramString1))) {
+//            paramString2 = getPrivacy(this.mContext, paramString1);
+//            if ((Build.VERSION.SDK_INT >= 16) && (paramString2.equals("none")))
+//                getActionsFromNotification(this.mContext, paramNotification, paramString1);
+//        }
+//    }
 
     private boolean shouldIgnore(String paramString) {
         SharedPreferences localSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this.mContext);
-        KeyguardManager localKeyguardManager = (KeyguardManager) this.mContext.getSystemService("keyguard");
+        KeyguardManager localKeyguardManager = (KeyguardManager) this.mContext.getSystemService(Context.KEYGUARD_SERVICE);
         return ((localSharedPreferences.getBoolean("collectonunlock", true)) || (localKeyguardManager.inKeyguardRestrictedInputMode()) || (localSharedPreferences.getBoolean("widgetlocker", false))) && (!localSharedPreferences.getBoolean(paramString + "." + "ignoreapp", false)) && (!paramString.equals("com.android.providers.downloads"));
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT_WATCH)
     private String toString(Notification.Action paramAction) {
         if (paramAction == null)
             return "[INVALID ACTION]";
@@ -325,7 +325,6 @@ public class NotificationManager {
             while (true) {
                 localStringBuilder.append("\n\nEXTRA:\n" + from(paramAction.getExtras()));
                 localStringBuilder.append("\n}");
-                return localStringBuilder.toString();
                 int j = arrayOfRemoteInput.length;
                 int i = 0;
                 while (i < j) {
@@ -334,34 +333,34 @@ public class NotificationManager {
                     i += 1;
                 }
             }
-        } catch (NoSuchMethodError paramAction) {
-            while (true)
-                localStringBuilder.append("error: " + paramAction.toString());
+        } catch (NoSuchMethodError ex) {
+            ex.printStackTrace();
         }
+        return localStringBuilder.toString();
     }
 
-    private String toString(NotificationCompat.Action paramAction) {
-        if (paramAction == null)
-            return "[INVALID ACTION]";
-        StringBuilder localStringBuilder = new StringBuilder("{V4");
-        localStringBuilder.append("\n\nTITLE:" + paramAction.getTitle());
-        localStringBuilder.append("\n\nREMOTE_INPUT:\n");
-        android.support.v4.app.RemoteInput[] arrayOfRemoteInput = paramAction.getRemoteInputs();
-        if ((arrayOfRemoteInput == null) || (arrayOfRemoteInput.length == 0))
-            localStringBuilder.append("null ");
-        while (true) {
-            localStringBuilder.append("\n\nEXTRA:\n" + from(paramAction.getExtras()));
-            localStringBuilder.append("\n}");
-            return localStringBuilder.toString();
-            int j = arrayOfRemoteInput.length;
-            int i = 0;
-            while (i < j) {
-                android.support.v4.app.RemoteInput localRemoteInput = arrayOfRemoteInput[i];
-                localStringBuilder.append(String.format("label:%s  key:%s  choices:%s;", new Object[]{localRemoteInput.getLabel(), localRemoteInput.getResultKey(), toString(localRemoteInput.getChoices())}));
-                i += 1;
-            }
-        }
-    }
+//    private String toString(NotificationCompat.Action paramAction) {
+//        if (paramAction == null)
+//            return "[INVALID ACTION]";
+//        StringBuilder localStringBuilder = new StringBuilder("{V4");
+//        localStringBuilder.append("\n\nTITLE:" + paramAction.getTitle());
+//        localStringBuilder.append("\n\nREMOTE_INPUT:\n");
+//        android.support.v4.app.RemoteInput[] arrayOfRemoteInput = paramAction.getRemoteInputs();
+//        if ((arrayOfRemoteInput == null) || (arrayOfRemoteInput.length == 0))
+//            localStringBuilder.append("null ");
+//        while (true) {
+//            localStringBuilder.append("\n\nEXTRA:\n" + from(paramAction.getExtras()));
+//            localStringBuilder.append("\n}");
+//            return localStringBuilder.toString();
+//            int j = arrayOfRemoteInput.length;
+//            int i = 0;
+//            while (i < j) {
+//                android.support.v4.app.RemoteInput localRemoteInput = arrayOfRemoteInput[i];
+//                localStringBuilder.append(String.format("label:%s  key:%s  choices:%s;", new Object[]{localRemoteInput.getLabel(), localRemoteInput.getResultKey(), toString(localRemoteInput.getChoices())}));
+//                i += 1;
+//            }
+//        }
+//    }
 
     private String toString(Object[] paramArrayOfObject) {
         if ((paramArrayOfObject == null) || (paramArrayOfObject.length == 0))
@@ -416,44 +415,44 @@ public class NotificationManager {
             log("↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑");
             log("↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑");
             log("\n\n");
-            return localNotificationAction;
         }
+        return localNotificationAction;
     }
 
-    public NotificationCompat.WearableExtender getWearableOptions(Notification paramNotification) {
-        NotificationCompat.WearableExtender localWearableExtender = new NotificationCompat.WearableExtender(paramNotification);
-        Log.e("russell", "showWearableExtender from NotificationResponse");
-        Bundle params = NotificationCompat.getExtras(paramNotification);
-        if (params != null) {
-            Parcelable[] actions = params.getParcelableArray("android.support.wearable.actions");
-            if ((actions != null) && (actions.length > 0)) {
-                localWearableExtender.clearActions();
-                int i = 0;
-                while (i < actions.length) {
-                    localWearableExtender.addAction(parseLegacyWearableAction((Bundle) actions[i]));
-                    i += 1;
-                }
-            }
-        }
-        return localWearableExtender;
-    }
+//    public NotificationCompat.WearableExtender getWearableOptions(Notification paramNotification) {
+//        NotificationCompat.WearableExtender localWearableExtender = new NotificationCompat.WearableExtender(paramNotification);
+//        Log.e("russell", "showWearableExtender from NotificationResponse");
+//        Bundle params = NotificationCompat.getExtras(paramNotification);
+//        if (params != null) {
+//            Parcelable[] actions = params.getParcelableArray("android.support.wearable.actions");
+//            if ((actions != null) && (actions.length > 0)) {
+//                localWearableExtender.clearActions();
+//                int i = 0;
+//                while (i < actions.length) {
+//                    localWearableExtender.addAction(parseLegacyWearableAction((Bundle) actions[i]));
+//                    i += 1;
+//                }
+//            }
+//        }
+//        return localWearableExtender;
+//    }
 
     public void init(Context paramContext) {
         this.mContext = paramContext;
     }
 
-    public void onNotificationPosted(Notification paramNotification, String paramString1, int paramInt, String paramString2, String paramString3, boolean paramBoolean) {
-        if (!isPersistent(paramNotification, paramString1)) {
-            parseNotification(paramNotification, paramString1, paramInt, paramString2, paramString3, paramBoolean);
-            if (paramNotification.bigContentView == null)
-                break label41;
-        }
-        label41:
-        for (paramNotification = paramNotification.bigContentView; ; paramNotification = paramNotification.contentView) {
-            getMultipleNotificationsFromInboxView(paramNotification, null);
-            return;
-        }
-    }
+//    public void onNotificationPosted(Notification paramNotification, String paramString1, int paramInt, String paramString2, String paramString3, boolean paramBoolean) {
+//        if (!isPersistent(paramNotification, paramString1)) {
+//            parseNotification(paramNotification, paramString1, paramInt, paramString2, paramString3, paramBoolean);
+//            if (paramNotification.bigContentView == null)
+//                break label41;
+//        }
+//        label41:
+//        for (paramNotification = paramNotification.bigContentView; ; paramNotification = paramNotification.contentView) {
+//            getMultipleNotificationsFromInboxView(paramNotification, null);
+//            return;
+//        }
+//    }
 
     private class Action {
         public PendingIntent actionIntent;

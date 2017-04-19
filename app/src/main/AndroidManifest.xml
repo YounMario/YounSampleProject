@@ -55,7 +55,11 @@
             android:exported="true"
             android:process=":cover" />
 
-        <activity android:name=".ui.activity.MulitTypeListItemSampleActivity" />
+        <service android:name=".sys.notification.NotificationService"
+            android:enabled="true"
+            android:exported="true"
+            android:process=":remoto"/>
+
         <activity android:name=".ui.activity.ScrollerViewSampleActivity" />
         <activity android:name=".ui.activity.AnimationActivity" />
         <activity android:name=".ui.activity.SvgIconSampleActivity" />
