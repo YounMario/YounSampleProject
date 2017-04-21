@@ -27,7 +27,7 @@ public class NotificationFragment extends BaseFragment implements NotificationOb
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.layout_notification, container);
+        return inflater.inflate(R.layout.layout_notification, container, false);
     }
 
     @Override
@@ -69,7 +69,6 @@ public class NotificationFragment extends BaseFragment implements NotificationOb
     @Override
     public void onReceiveMessage(NotificationAction notification) {
         mTextView.setText(notification.extraStr);
-        NotificationDispatcher.getInstance().registObserver(this);
     }
 
 

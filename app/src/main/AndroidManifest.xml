@@ -3,7 +3,7 @@
     package="com.younchen.younsampleproject">
 
     <!--禁用屏幕锁 -->
-    <uses-permission android:name="android.permission.DISABLE_KEYGUARD"/>
+    <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
     <!--window 类型alert-->
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <application
@@ -55,10 +55,16 @@
             android:exported="true"
             android:process=":cover" />
 
-        <service android:name=".sys.notification.NotificationService"
+        <service
+            android:name=".sys.notification.NotificationService"
             android:enabled="true"
             android:exported="true"
-            android:process=":remoto"/>
+            android:label="@string/app_name"
+            android:permission="android.permission.BIND_NOTIFICATION_LISTENER_SERVICE">
+            <intent-filter>
+                <action android:name="android.service.notification.NotificationListenerService" />
+            </intent-filter>
+        </service>
 
         <activity android:name=".ui.activity.ScrollerViewSampleActivity" />
         <activity android:name=".ui.activity.AnimationActivity" />
