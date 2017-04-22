@@ -1,12 +1,13 @@
 package com.younchen.younsampleproject;
 
-import android.app.Application;
+
+import android.support.multidex.MultiDexApplication;
 
 /**
  * Created by Administrator on 2017/4/11.
  */
 
-public class App extends Application {
+public class App extends MultiDexApplication {
 
     private static App mInstance;
 
