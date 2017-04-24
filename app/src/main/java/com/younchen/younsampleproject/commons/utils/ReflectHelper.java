@@ -128,6 +128,7 @@ public class ReflectHelper {
         return obj;
     }
 
+
     /**
      * 调用类方法，包括私有
      *
@@ -145,10 +146,9 @@ public class ReflectHelper {
         Object obj = null;
 
         int count = 0;
-        for (Class<?> classType = object.getClass() ; classType != Object.class; classType = classType.getSuperclass()) {
+        for (Class<?> classType = object.getClass(); classType != Object.class; classType = classType.getSuperclass()) {
             try {
-                if (count++ > 3) break;
-                method = classType.getDeclaredMethod(methodName, type) ;
+                method = classType.getDeclaredMethod(methodName, type);
                 break;
             } catch (NoSuchMethodException ex) {
             } catch (Exception ex) {
