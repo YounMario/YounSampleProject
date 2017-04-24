@@ -10,5 +10,6 @@ public class Contact implements Serializable{
 
     public String name;
     public String headImageUrl;
+    public String message;
 
 }
