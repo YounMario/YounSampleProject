@@ -91,18 +91,24 @@ public class ReflectHelper {
      */
     public static Object getFieldValue(Object object, String member) {
         Class classType = object.getClass();
-        Field field ;
-        while (classType != Object.class) {
+        return getFieldValue(classType, member);
+    }
+
+    public static Object getFieldValue(Class clazz, String member) {
+        Field field;
+        while (clazz != Object.class) {
             try {
-                field = classType.getDeclaredField(member);
+                field = clazz.getDeclaredField(member);
                 field.setAccessible(true);
-                return field.get(object);
+                return field.get(null);
             } catch (Exception e) {
-                classType = classType.getSuperclass();
+                clazz = clazz.getSuperclass();
             }
         }
         return null;
     }
+
+
 
     /**
      * 调用类方法，包括私有
