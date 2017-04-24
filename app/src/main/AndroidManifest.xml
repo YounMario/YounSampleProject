@@ -6,6 +6,9 @@
     <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
     <!--window 类型alert-->
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <application
         android:name=".App"
         android:allowBackup="true"
