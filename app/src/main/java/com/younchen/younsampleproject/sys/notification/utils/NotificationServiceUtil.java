@@ -5,7 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.provider.Settings;
+import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
+
+import java.util.List;
 
 public class NotificationServiceUtil {
     private static final String TAG = "NotificationServiceUtil";
@@ -125,5 +128,20 @@ public class NotificationServiceUtil {
         }
 
         return accessibilityFound;
+    }
+
+    public final static NotificationCompat.Action getReplyAction(List<NotificationCompat.Action> list) {
+        if (list == null || list.isEmpty()) {
+            return null;
+        }
+        for (NotificationCompat.Action act : list) {
+            if (act == null || act.getRemoteInputs() == null) {
+                continue;
+            }
+            if (act.getRemoteInputs().length > 0) {
+                return act;
+            }
+        }
+        return null;
     }
 }

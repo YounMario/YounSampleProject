@@ -9,24 +9,17 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.service.notification.NotificationListenerService;
 import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.RemoteInput;
-import android.text.TextUtils;
 import android.util.Log;
-import android.widget.RemoteViews;
 
+import com.younchen.younsampleproject.sys.notification.model.ChatNotification;
 import com.younchen.younsampleproject.sys.notification.model.NotificationAction;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -311,33 +304,33 @@ public class NotificationManager {
         return ((localSharedPreferences.getBoolean("collectonunlock", true)) || (localKeyguardManager.inKeyguardRestrictedInputMode()) || (localSharedPreferences.getBoolean("widgetlocker", false))) && (!localSharedPreferences.getBoolean(paramString + "." + "ignoreapp", false)) && (!paramString.equals("com.android.providers.downloads"));
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT_WATCH)
-    private String toString(Notification.Action paramAction) {
-        if (paramAction == null)
-            return "[INVALID ACTION]";
-        StringBuilder localStringBuilder = new StringBuilder("{\n");
-        localStringBuilder.append(paramAction.title);
-        localStringBuilder.append("\n\nREMOTE_INPUT:\n");
-        try {
-            android.app.RemoteInput[] arrayOfRemoteInput = paramAction.getRemoteInputs();
-            if ((arrayOfRemoteInput == null) || (arrayOfRemoteInput.length == 0))
-                localStringBuilder.append("null");
-            while (true) {
-                localStringBuilder.append("\n\nEXTRA:\n" + from(paramAction.getExtras()));
-                localStringBuilder.append("\n}");
-                int j = arrayOfRemoteInput.length;
-                int i = 0;
-                while (i < j) {
-                    android.app.RemoteInput localRemoteInput = arrayOfRemoteInput[i];
-                    localStringBuilder.append(String.format("label:%s  key:%s  choices:%s;", new Object[]{localRemoteInput.getLabel(), localRemoteInput.getResultKey(), toString(localRemoteInput.getChoices())}));
-                    i += 1;
-                }
-            }
-        } catch (NoSuchMethodError ex) {
-            ex.printStackTrace();
-        }
-        return localStringBuilder.toString();
-    }
+//    @TargetApi(Build.VERSION_CODES.KITKAT)
+//    private String toString(Notification.Action paramAction) {
+//        if (paramAction == null)
+//            return "[INVALID ACTION]";
+//        StringBuilder localStringBuilder = new StringBuilder("{\n");
+//        localStringBuilder.append(paramAction.title);
+//        localStringBuilder.append("\n\nREMOTE_INPUT:\n");
+//        try {
+//            android.app.RemoteInput[] arrayOfRemoteInput = paramAction.getRemoteInputs();
+//            if ((arrayOfRemoteInput == null) || (arrayOfRemoteInput.length == 0))
+//                localStringBuilder.append("null");
+//            while (true) {
+//                localStringBuilder.append("\n\nEXTRA:\n" + from(paramAction.getExtras()));
+//                localStringBuilder.append("\n}");
+//                int j = arrayOfRemoteInput.length;
+//                int i = 0;
+//                while (i < j) {
+//                    android.app.RemoteInput localRemoteInput = arrayOfRemoteInput[i];
+//                    localStringBuilder.append(String.format("label:%s  key:%s  choices:%s;", new Object[]{localRemoteInput.getLabel(), localRemoteInput.getResultKey(), toString(localRemoteInput.getChoices())}));
+//                    i += 1;
+//                }
+//            }
+//        } catch (NoSuchMethodError ex) {
+//            ex.printStackTrace();
+//        }
+//        return localStringBuilder.toString();
+//    }
 
 //    private String toString(NotificationCompat.Action paramAction) {
 //        if (paramAction == null)
@@ -368,24 +361,29 @@ public class NotificationManager {
         return String.valueOf(Arrays.asList(paramArrayOfObject));
     }
 
+
     @TargetApi(Build.VERSION_CODES.KITKAT)
-    public NotificationAction extractWearNotification(Notification paramNotification, String packageName, String tag, NotificationListenerService notificationListenerService, int id) {
+    public ChatNotification extractWearNotification(Notification paramNotification, String packageName, String tag, NotificationListenerService notificationListenerService, int id) {
         log("\n\n\n\n\n\n\nextractWearNotification\n");
+        ChatNotification chatNotification = new ChatNotification();
+        chatNotification.rawNotification = paramNotification;
         List<NotificationCompat.Action> localList = new NotificationCompat.WearableExtender(paramNotification).getActions();
         NotificationAction localNotificationAction = new NotificationAction();
         localNotificationAction.tag = tag;
         localNotificationAction.packageName = packageName;
         localNotificationAction.mIntent = paramNotification.contentIntent;
-        Object localObject = getReplyAction(localList);
-        if (localObject != null) {
-            localNotificationAction.remoteInputs.addAll(Arrays.asList(((NotificationCompat.Action) localObject).getRemoteInputs()));
-            localNotificationAction.mIntent = ((NotificationCompat.Action) localObject).getActionIntent();
+        NotificationCompat.Action replyAction = getReplyAction(localList);
+        if (replyAction != null) {
+            localNotificationAction.remoteInputs = replyAction.getRemoteInputs();
+            localNotificationAction.mIntent = replyAction.getActionIntent();
         }
-        localObject = new ParsedNotification(paramNotification);
+        chatNotification.notificationAction = localNotificationAction;
+        ParsedNotification parsedNotification = new ParsedNotification(paramNotification);
         if (paramNotification.actions != null) {
-            printNotificationLog(paramNotification, packageName, id, tag, notificationListenerService, localList, localNotificationAction, (ParsedNotification) localObject);
+            printNotificationLog(paramNotification, packageName, id, tag, notificationListenerService, localList, localNotificationAction, parsedNotification);
         }
-        return localNotificationAction;
+        chatNotification.parsedNotification = parsedNotification;
+        return chatNotification;
     }
 
     @TargetApi(Build.VERSION_CODES.KITKAT)
@@ -408,6 +406,7 @@ public class NotificationManager {
             localStringBuilder.append(String.format("\n\nTicker TEXT: %s", new Object[]{localObject.getTickerText()}));
             localStringBuilder.append(String.format("\n\nWho am I: %s", new Object[]{notificationListenerService.getClass().getSuperclass().getSimpleName()}));
             localStringBuilder.append("\n\n");
+            localNotificationAction.title = localObject.getContentViewTexts().toString();
             localNotificationAction.extraStr = localStringBuilder.toString();
             log("↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓");
             log("↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓");

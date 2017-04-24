@@ -1,6 +1,7 @@
 package com.younchen.younsampleproject.sys.notification.model;
 
 import android.app.PendingIntent;
+import android.graphics.Bitmap;
 import android.support.v4.app.RemoteInput;
 
 import java.util.ArrayList;
@@ -17,8 +18,9 @@ public class NotificationAction {
     public String listener;
     public PendingIntent mIntent;
     public String packageName = "";
-    public ArrayList<RemoteInput> remoteInputs = new ArrayList();
+    public RemoteInput[] remoteInputs;
     public String summary;
     public String tag;
     public String title;
+    public Bitmap head;
 }

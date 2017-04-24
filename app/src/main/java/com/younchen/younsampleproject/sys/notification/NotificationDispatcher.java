@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 
+import com.younchen.younsampleproject.sys.notification.model.ChatNotification;
 import com.younchen.younsampleproject.sys.notification.model.NotificationAction;
 import com.younchen.younsampleproject.sys.notification.model.NotificationObserver;
 
@@ -22,7 +23,7 @@ public class NotificationDispatcher {
     private Handler mHandler = new Handler(Looper.getMainLooper()) {
         @Override
         public void handleMessage(Message msg) {
-            NotificationAction notification = (NotificationAction) msg.obj;
+            ChatNotification notification = (ChatNotification) msg.obj;
             for (NotificationObserver observer : mObservers) {
                 observer.onReceiveMessage(notification);
             }
@@ -40,7 +41,7 @@ public class NotificationDispatcher {
 
     }
 
-    public void dispatchNotification(NotificationAction notificationAction) {
+    public void dispatchNotification(ChatNotification notificationAction) {
         Message message = mHandler.obtainMessage();
         message.obj = notificationAction;
         mHandler.sendMessage(message);

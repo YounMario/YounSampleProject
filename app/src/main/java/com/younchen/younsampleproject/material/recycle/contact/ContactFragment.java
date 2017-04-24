@@ -1,4 +1,4 @@
-package com.younchen.younsampleproject.material.recycle;
+package com.younchen.younsampleproject.material.recycle.contact;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
