@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="56dp"
     android:orientation="vertical">
@@ -12,7 +13,8 @@
         android:layout_centerInParent="true"
         android:layout_centerVertical="true"
         android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp" />
+        android:layout_marginRight="16dp"
+        />
 
     <TextView
         android:id="@+id/txt_contact_name"
@@ -23,6 +25,7 @@
         android:layout_marginRight="16dp"
         android:maxLines="1"
         android:ellipsize="end"
-        android:textSize="16sp"/>
+        android:textSize="16sp"
+        tools:text="Youn Young Chen"/>
 
 </RelativeLayout>

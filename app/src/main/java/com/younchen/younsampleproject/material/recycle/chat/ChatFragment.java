@@ -1,4 +1,4 @@
-package com.younchen.younsampleproject.material.recycle.contact;
+package com.younchen.younsampleproject.material.recycle.chat;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -10,19 +10,20 @@ import android.view.ViewGroup;
 import com.younchen.younsampleproject.R;
 import com.younchen.younsampleproject.commons.fragment.BaseFragment;
 import com.younchen.younsampleproject.material.Constants;
-import com.younchen.younsampleproject.material.adapter.ContactAdapter;
+import com.younchen.younsampleproject.material.adapter.ChatListAdapter;
 import com.younchen.younsampleproject.material.bean.Contact;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Administrator on 2017/4/23.
+ * Created by Administrator on 2017/4/24.
  */
 
-public class ContactFragment extends BaseFragment {
+public class ChatFragment extends BaseFragment {
 
-    private ContactAdapter contactAdapter;
+
+    private ChatListAdapter mChatListAdapter;
     private List<Contact> mContactList;
     private RecyclerView mRecycleView;
 
@@ -45,11 +46,12 @@ public class ContactFragment extends BaseFragment {
             Contact contact = new Contact();
             contact.headImageUrl = Constants.HEAD_IMG[i % 5];
             contact.name = Constants.NAME[i % 5];
+            contact.message = Constants.MESSAGE[i % 5];
             mContactList.add(contact);
         }
-        contactAdapter = new ContactAdapter(getActivity());
-        contactAdapter.setData(mContactList);
-        mRecycleView.setAdapter(contactAdapter);
+        mChatListAdapter = new ChatListAdapter(getActivity());
+        mChatListAdapter.setData(mContactList);
+        mRecycleView.setAdapter(mChatListAdapter);
     }
 
     @Override

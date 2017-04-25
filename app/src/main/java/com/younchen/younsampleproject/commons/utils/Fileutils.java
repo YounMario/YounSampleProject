@@ -1,6 +1,5 @@
 package com.younchen.younsampleproject.commons.utils;
 
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Environment;
@@ -24,7 +23,6 @@ import java.nio.channels.ReadableByteChannel;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.regex.Pattern;
-import java.util.zip.InflaterInputStream;
 
 public class FileUtils {
 
