@@ -1,4 +1,4 @@
-package com.younchen.younsampleproject.ui.view.ExpandableLayout;
+package com.younchen.younsampleproject.ui.view.ExpandableLayout.adapter;
 
 import android.content.Context;
 import android.view.View;
@@ -9,6 +9,7 @@ import com.younchen.younsampleproject.R;
 import com.younchen.younsampleproject.commons.adapter.BaseAdapter;
 import com.younchen.younsampleproject.commons.holder.ViewHolder;
 import com.younchen.younsampleproject.material.bean.Contact;
+import com.younchen.younsampleproject.ui.view.ExpandableLayout.ExpandableLayout;
 
 /**
  * Created by Administrator on 2017/4/25.

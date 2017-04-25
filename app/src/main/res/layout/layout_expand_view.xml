@@ -12,7 +12,9 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:expend_height="80dp"
-        app:is_expend="true">
+        app:expend_view_id="@+id/expand_content"
+        app:is_expend="true"
+        app:visible_part_height="0dp">
 
         <include layout="@layout/item_chat_list_style" />
 

@@ -1,5 +1,10 @@
 package com.younchen.younsampleproject.material;
 
+import com.younchen.younsampleproject.material.bean.Contact;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Administrator on 2017/4/24.
  */
@@ -29,4 +34,18 @@ public class Constants {
             "音浪，人狼金城郡， 狗证吧， 暗恋成的山哈哈哈， 金城武扮演jin kazama",
             "合伙,你妹呀 你是你大爷的儿子的表弟还是堂弟我不知道！！！"
     };
+
+    public static List<Contact> DEFULT_CONTACT_DATA_LIST = new ArrayList<>();
+
+    static {
+        for (int i = 0; i < 10; i++) {
+            Contact contact = new Contact();
+            contact.headImageUrl = HEAD_IMG[i % 5];
+            contact.message = MESSAGE[i % 5];
+            contact.name = NAME[i % 5];
+            DEFULT_CONTACT_DATA_LIST.add(contact);
+        }
+    }
+
+
 }

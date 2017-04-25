@@ -13,6 +13,7 @@ import com.younchen.younsampleproject.R;
 import com.younchen.younsampleproject.commons.fragment.BaseFragment;
 import com.younchen.younsampleproject.material.Constants;
 import com.younchen.younsampleproject.material.bean.Contact;
+import com.younchen.younsampleproject.ui.view.ExpandableLayout.adapter.ExpandableItemAdapter;
 
 import java.util.ArrayList;
 
@@ -54,7 +55,6 @@ public class ExpandableLayoutFragment extends BaseFragment {
                 mExpandleLayout.toggle();
             }
         });
-
         mExpandleLayout.setExpandListener(new ExpandableLayout.ExpandListener() {
             @Override
             public void onExpand() {

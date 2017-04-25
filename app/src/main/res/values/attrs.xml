@@ -9,7 +9,9 @@
     </declare-styleable>
 
     <declare-styleable name="ExpandableLayout">
+        <attr name="expend_view_id" format="reference"/>
         <attr name="expend_height" format="dimension" />
+        <attr name="visible_part_height" format="dimension" />
         <attr name="is_expend" format="boolean" />
     </declare-styleable>
 </resources>
