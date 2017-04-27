@@ -13,7 +13,8 @@
         android:layout_centerInParent="true"
         android:layout_centerVertical="true"
         android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp" />
+        android:layout_marginRight="16dp"
+        tools:src="@color/colorAccent"/>
 
     <TextView
         android:id="@+id/txt_contact_name"
