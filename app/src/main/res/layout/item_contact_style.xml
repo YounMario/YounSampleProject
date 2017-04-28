@@ -29,4 +29,10 @@
         android:textSize="16sp"
         tools:text="Youn Young Chen"/>
 
+    <View
+        android:background="#90000000"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_marginLeft="72dp"
+        android:layout_height="1px"/>
 </RelativeLayout>

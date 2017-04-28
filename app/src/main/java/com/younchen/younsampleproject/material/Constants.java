@@ -1,5 +1,7 @@
 package com.younchen.younsampleproject.material;
 
+import com.younchen.younsampleproject.App;
+import com.younchen.younsampleproject.material.bean.AppBean;
 import com.younchen.younsampleproject.material.bean.Contact;
 
 import java.util.ArrayList;
@@ -35,7 +37,17 @@ public class Constants {
             "合伙,你妹呀 你是你大爷的儿子的表弟还是堂弟我不知道！！！"
     };
 
-    public static List<Contact> DEFULT_CONTACT_DATA_LIST = new ArrayList<>();
+    public static final String[] APP_PACKAGES = {
+
+
+    };
+
+    public static final String[] APP_NAMES = {
+            "WeChat", "QQ", "Music", "Sport", "FaceBook", "WhatsApp", "Line", "Youtube"
+    };
+
+    public static List<Contact> DEFAULT_CONTACT_DATA_LIST = new ArrayList<>();
+    public static List<AppBean> APPS = new ArrayList<>();
 
     static {
         for (int i = 0; i < 10; i++) {
@@ -43,7 +55,13 @@ public class Constants {
             contact.headImageUrl = HEAD_IMG[i % 5];
             contact.message = MESSAGE[i % 5];
             contact.name = NAME[i % 5];
-            DEFULT_CONTACT_DATA_LIST.add(contact);
+            DEFAULT_CONTACT_DATA_LIST.add(contact);
+        }
+
+        for (int i = 0; i < 8; i++) {
+            AppBean app = new AppBean();
+            app.appName = APP_NAMES[i % 8];
+            APPS.add(app);
         }
     }
 
