@@ -14,7 +14,7 @@ import com.younchen.younsampleproject.material.bean.AppBean;
 public class BottomMenuAdapter extends BaseAdapter<AppBean> {
 
     public BottomMenuAdapter(Context context) {
-        super(context, R.layout.item_grid_style);
+        super(context, R.layout.item_option_menu_grid_style);
     }
 
     @Override
