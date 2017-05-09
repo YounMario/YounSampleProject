@@ -32,28 +32,6 @@ public class NotificationMessageAdapter extends BaseAdapter<ChatEntrance>{
     }
 
 
-    @Override
-    public void covert(ViewHolder holder, final ChatEntrance item) {
-        TextView reply = (TextView) holder.getView(R.id.txt_reply);
-        ImageView imageView = (ImageView) holder.getView(R.id.img_head);
-        reply.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                replyMessage(item);
-            }
-        });
-        holder.setText(R.id.txt_contact_name, item.title);
-        Glide.with(mContext)
-                .load(item.imgUrl)
-                .centerCrop()
-                .crossFade()
-                .into(imageView);
-        if (item.action == null || item.action.getActionIntent() == null) {
-            reply.setVisibility(View.GONE);
-        } else {
-            reply.setVisibility(View.VISIBLE);
-        }
-    }
 
     private void replyMessage(ChatEntrance item) {
         PendingIntent pendingIntent = item.action.getActionIntent();
@@ -85,5 +63,28 @@ public class NotificationMessageAdapter extends BaseAdapter<ChatEntrance>{
 
     private boolean isSupportReply(ChatNotification item) {
         return item.notificationAction != null && item.notificationAction.remoteInputs != null && item.notificationAction.remoteInputs.length != 0;
+    }
+
+    @Override
+    public void covert(ViewHolder holder, final ChatEntrance item, int position) {
+        TextView reply = (TextView) holder.getView(R.id.txt_reply);
+        ImageView imageView = (ImageView) holder.getView(R.id.img_head);
+        reply.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                replyMessage(item);
+            }
+        });
+        holder.setText(R.id.txt_contact_name, item.title);
+        Glide.with(mContext)
+                .load(item.imgUrl)
+                .centerCrop()
+                .crossFade()
+                .into(imageView);
+        if (item.action == null || item.action.getActionIntent() == null) {
+            reply.setVisibility(View.GONE);
+        } else {
+            reply.setVisibility(View.VISIBLE);
+        }
     }
 }

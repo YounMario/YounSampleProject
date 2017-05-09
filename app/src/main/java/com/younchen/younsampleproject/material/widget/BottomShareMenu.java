@@ -41,7 +41,7 @@ public class BottomShareMenu extends AbstractWindow {
         mBottomMenuAdapter.setData(Constants.APPS);
 
         mRecycleView.setAdapter(mBottomMenuAdapter);
-        mRecycleView.addItemDecoration(new GridItemDecoration(3));
+        mRecycleView.addItemDecoration(new GridItemDecoration(4));
     }
 
     @Override

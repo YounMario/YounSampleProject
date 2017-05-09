@@ -60,10 +60,10 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<ViewHolder> {
 
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
-        covert(holder, data.get(position));
+        covert(holder, data.get(position), position);
     }
 
-    public abstract void covert(ViewHolder holder, T item);
+    public abstract void covert(ViewHolder holder, T item, int position);
 
 
     @Override

@@ -1,4 +1,4 @@
-package com.younchen.younsampleproject.ui.view.ExpandableLayout.adapter;
+package com.younchen.younsampleproject.ui.view.adapter;
 
 import android.content.Context;
 import android.widget.ImageView;
@@ -23,7 +23,7 @@ public class ExpandableGridItemAdapter extends BaseAdapter<Contact> {
     }
 
     @Override
-    public void covert(ViewHolder holder, Contact item) {
+    public void covert(ViewHolder holder, Contact item, int position) {
         ImageView imageView = (ImageView) holder.getView(R.id.img_head);
         Glide.with(mContext)
                 .load(item.headImageUrl)

@@ -17,7 +17,7 @@ public class StringItemAdapter extends BaseAdapter<String> {
     }
 
     @Override
-    public void covert(ViewHolder holder, final String item) {
+    public void covert(ViewHolder holder, final String item, int position) {
         holder.setText(R.id.content,item);
         holder.setOnItemClickListener(new View.OnClickListener() {
             @Override

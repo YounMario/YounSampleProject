@@ -18,7 +18,7 @@ public class BottomMenuAdapter extends BaseAdapter<AppBean> {
     }
 
     @Override
-    public void covert(ViewHolder holder, AppBean item) {
+    public void covert(ViewHolder holder, AppBean item, int position) {
         holder.setText(R.id.txt_app_name, item.appName);
         holder.getView(R.id.img_icon).setBackgroundResource(R.color.colorAccent);
     }

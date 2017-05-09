@@ -26,8 +26,9 @@ public class FragAdapter extends BaseAdapter<Frag> {
         this.mOnItemClickListener = mOnItemClickListener;
     }
 
+
     @Override
-    public void covert(ViewHolder holder, final Frag item) {
+    public void covert(ViewHolder holder, final Frag item, int position) {
         holder.setText(R.id.content, item.getSimpleName());
         holder.setOnItemClickListener(new View.OnClickListener() {
             @Override

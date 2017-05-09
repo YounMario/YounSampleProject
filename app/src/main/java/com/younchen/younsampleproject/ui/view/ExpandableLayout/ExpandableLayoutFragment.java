@@ -13,7 +13,7 @@ import com.younchen.younsampleproject.R;
 import com.younchen.younsampleproject.commons.fragment.BaseFragment;
 import com.younchen.younsampleproject.material.Constants;
 import com.younchen.younsampleproject.material.bean.Contact;
-import com.younchen.younsampleproject.ui.view.ExpandableLayout.adapter.ExpandableItemAdapter;
+import com.younchen.younsampleproject.ui.view.adapter.ExpandableItemAdapter;
 
 import java.util.ArrayList;
 
