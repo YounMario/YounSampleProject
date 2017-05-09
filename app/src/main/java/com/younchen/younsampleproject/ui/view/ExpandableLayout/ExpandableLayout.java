@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.graphics.Canvas;
 import android.support.annotation.NonNull;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.LinearLayoutManager;
@@ -36,6 +37,7 @@ public class ExpandableLayout extends LinearLayout {
 
     private int mExpandableViewId;
     private boolean mHasMeasuredExpendViewHeight = false;
+    private boolean mIsReady = false;
 
     public ExpandableLayout(Context context) {
         this(context, null);
@@ -50,7 +52,6 @@ public class ExpandableLayout extends LinearLayout {
         TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.ExpandableLayout, defStyleAttr, 0);
         mIsExpendBegin = a.getBoolean(R.styleable.ExpandableLayout_is_expend, false);
         mDefaultVisibleHeight = (int) a.getDimension(R.styleable.ExpandableLayout_visible_part_height, 0);
-        mFullVisibleHeight = (int) a.getDimension(R.styleable.ExpandableLayout_expend_height, 0);
         mExpandableViewId = a.getResourceId(R.styleable.ExpandableLayout_expend_view_id, -1);
         a.recycle();
         checkExpandable();
@@ -79,6 +80,13 @@ public class ExpandableLayout extends LinearLayout {
         }
     }
 
+    @Override
+    protected void dispatchDraw(Canvas canvas) {
+        if (!mIsReady) {
+            return;
+        }
+        super.dispatchDraw(canvas);
+    }
 
     private void setData() {
         if (mDefaultVisibleHeight == 0) {
@@ -162,13 +170,9 @@ public class ExpandableLayout extends LinearLayout {
             }
             mFullVisibleHeight = expandableView.getMeasuredHeight();
             mHasMeasuredExpendViewHeight = true;
+            mIsReady = true;
         }
-        if(mCurrentState == EXPAND){
-            mExpandableView.getLayoutParams().height = mFullVisibleHeight;
-        }else {
-            mExpandableView.getLayoutParams().height = mDefaultVisibleHeight;
-        }
-        mExpandableView.requestLayout();
+        refresh();
     }
 
     public void expand() {

@@ -35,4 +35,6 @@ public class CustomGridLayoutManager extends GridLayoutManager {
         return isScrollEnabled && super.canScrollVertically();
     }
 
+
+
 }
