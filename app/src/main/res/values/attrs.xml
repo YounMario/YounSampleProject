@@ -14,4 +14,9 @@
         <attr name="visible_part_height" format="dimension" />
         <attr name="is_expend" format="boolean" />
     </declare-styleable>
+
+    <declare-styleable name="ImFlexboxLayout">
+        <attr name="viewPartMain" format="reference"></attr>
+        <attr name="viewPartSlave" format="reference"></attr>
+    </declare-styleable>
 </resources>
