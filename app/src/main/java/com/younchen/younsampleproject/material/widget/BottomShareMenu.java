@@ -10,6 +10,7 @@ import android.view.WindowManager;
 
 import com.younchen.younsampleproject.R;
 import com.younchen.younsampleproject.commons.anim.DefaultAnimationListener;
+import com.younchen.younsampleproject.commons.utils.DimenUtils;
 import com.younchen.younsampleproject.commons.widget.AbstractWindow;
 import com.younchen.younsampleproject.material.Constants;
 import com.younchen.younsampleproject.material.adapter.BottomMenuAdapter;
@@ -25,6 +26,7 @@ public class BottomShareMenu extends AbstractWindow {
     private RecyclerView mRecycleView;
     private BottomMenuAdapter mBottomMenuAdapter;
     private Animator mPopWindowAnimation;
+    private static final int DEFAULT_WINDOW_ANIM_HEIGHT = DimenUtils.dp2px(220);
 
     public BottomShareMenu(Context context) {
         super(context);
@@ -41,7 +43,7 @@ public class BottomShareMenu extends AbstractWindow {
         mBottomMenuAdapter.setData(Constants.APPS);
 
         mRecycleView.setAdapter(mBottomMenuAdapter);
-        mRecycleView.addItemDecoration(new GridItemDecoration(4));
+        mRecycleView.addItemDecoration(new GridItemDecoration(3));
     }
 
     @Override
@@ -50,7 +52,7 @@ public class BottomShareMenu extends AbstractWindow {
         if (mPopWindowAnimation != null && mPopWindowAnimation.isRunning()) {
             return;
         }
-        mPopWindowAnimation = ObjectAnimator.ofFloat(mRootView, View.TRANSLATION_Y, mRootView.getMeasuredHeight(), 0);
+        mPopWindowAnimation = ObjectAnimator.ofFloat(mRootView, View.TRANSLATION_Y, mRootView.getMeasuredHeight() == 0 ? DEFAULT_WINDOW_ANIM_HEIGHT : mRootView.getMeasuredHeight(), 0);
         mPopWindowAnimation.addListener(new DefaultAnimationListener() {
 
             @Override
@@ -76,7 +78,7 @@ public class BottomShareMenu extends AbstractWindow {
         mPopWindowAnimation.addListener(new DefaultAnimationListener() {
             @Override
             public void onAnimationEnd(Animator animation) {
-                mRootView.setVisibility(View.INVISIBLE);
+                mRootView.setVisibility(View.GONE);
                 hideWindow();
             }
         });
@@ -84,10 +86,20 @@ public class BottomShareMenu extends AbstractWindow {
         mPopWindowAnimation.start();
     }
 
+    @Override
+    public boolean onBackPressed() {
+        if (isShowing()) {
+            hide();
+            return true;
+        }
+        return false;
+    }
+
 
     @Override
     public WindowManager.LayoutParams getDefaultLayoutParams() {
         WindowManager.LayoutParams layoutParams = super.getDefaultLayoutParams();
+        layoutParams.type = WindowManager.LayoutParams.TYPE_APPLICATION;
         layoutParams.gravity = Gravity.BOTTOM;
         return layoutParams;
     }

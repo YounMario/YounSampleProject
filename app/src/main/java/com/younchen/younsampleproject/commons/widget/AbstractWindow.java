@@ -5,8 +5,9 @@ import android.content.pm.ActivityInfo;
 import android.graphics.PixelFormat;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
-
+import android.widget.FrameLayout;
 
 
 /**
@@ -20,25 +21,39 @@ public abstract class AbstractWindow {
     private WindowManager mWindowManager;
 
     private boolean mIsShow;
+    private BackPressableFrameLayout mFrameLayout;
 
     public AbstractWindow(Context context) {
         mContext = context;
         mWindowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        mFrameLayout = new BackPressableFrameLayout(mContext) {
+            @Override
+            public boolean onBackKeyPressed() {
+                return onBackPressed();
+            }
+        };
     }
 
-    public void setContentView(int layoutId) {
+    protected void setContentView(int layoutId) {
         this.mRootView = LayoutInflater.from(mContext).inflate(layoutId, null);
+        addViewToContainer(mRootView);
         initView();
     }
 
     public void setContentView(View view) {
         this.mRootView = view;
+        addViewToContainer(mRootView);
         initView();
+    }
+
+    private void addViewToContainer(View view){
+        mFrameLayout.addView(mRootView, new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
     }
 
     protected abstract void initView();
     public abstract void show();
     public abstract void hide();
+    public abstract boolean onBackPressed();
 
     public View findViewById(int id) {
         if (mRootView != null) {
@@ -47,15 +62,14 @@ public abstract class AbstractWindow {
         return null;
     }
 
-    public void showWindow() {
+    protected void showWindow() {
         WindowManager.LayoutParams params = getDefaultLayoutParams();
-        params.type = WindowManager.LayoutParams.TYPE_TOAST;
-        mWindowManager.addView(mRootView, params);
+        mWindowManager.addView(mFrameLayout, params);
         mIsShow = true;
     }
 
-    public void hideWindow() {
-        mWindowManager.removeView(mRootView);
+    protected void hideWindow() {
+        mWindowManager.removeView(mFrameLayout);
         mIsShow = false;
     }
 
