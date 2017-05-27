@@ -41,17 +41,23 @@ public class FragmentInflater {
             final String cName = entries.nextElement();
             if (cName == null || cName.contains("$") || !cName.startsWith(prf)) continue;
             if (filter != null && !filter.accept(null, cName)) continue;
-            String name = cName;
-            while (name != null && !TextUtils.equals(pkg, name)) {
-                final String pName = name.subSequence(0, name.lastIndexOf('.')).toString();
-                final Frag frag = parentCache.containsKey(name) ? parentCache.get(name) : new Frag(name, name != cName);
+            //get class Name in subPackage;
+            String className = cName;
+
+            while (!TextUtils.equals(pkg, className)) {
+                //get subclass package name;
+                final String pName = className.subSequence(0, className.lastIndexOf('.')).toString();
+
+                final Frag frag = parentCache.containsKey(className) ? parentCache.get(className) : new Frag(className, !className.equals(cName));
                 final Frag parent = parentCache.containsKey(pName) ? parentCache.get(pName) : new Frag(pName, true);
-                name = pName;
+                className = pName;
                 //
                 if (!frag.isParent() || frag.len() == 1) {
                     parent.add(frag);
-                    if (TextUtils.equals(pName, pkg)) result.add(frag);//到顶层了
-                    YLog.i(TAG,"frag.isParent()=" + frag.isParent() + " parent=" + frag.len() + " " + frag.getName());
+                    if (TextUtils.equals(pName, pkg) && !result.contains(frag)) {
+                        result.add(frag);//到顶层了
+                    }
+                    YLog.i(TAG, "frag.isParent()=" + frag.isParent() + " parent=" + frag.len() + " " + frag.getName());
                 }
                 parentCache.put(pName, parent);
             }

@@ -20,7 +20,7 @@ public class Frag implements Parcelable {
         this(name, false);
     }
 
-    public Frag(String name, boolean parent) {
+    Frag(String name, boolean parent) {
         this.name = name;
         this.parent = parent;
         simpleName = name == null || !name.contains(".") ? name : name.substring(name.lastIndexOf('.') + 1);
@@ -35,15 +35,15 @@ public class Frag implements Parcelable {
         return simpleName;
     }
 
-    public boolean isParent() {
+    boolean isParent() {
         return parent;
     }
 
-    public int len() {
+    int len() {
         return isParent() ? children.size() : -1;
     }
 
-    public List<Frag> getChildren() {
+    List<Frag> getChildren() {
         return children;
     }
 
@@ -52,7 +52,7 @@ public class Frag implements Parcelable {
     }
 
     public boolean add(Frag c) {
-        return c == null ? false : children.add(c);
+        return c != null && !children.contains(c) && children.add(c);
     }
 
     @Override
@@ -78,11 +78,11 @@ public class Frag implements Parcelable {
         dest.writeList(this.children);
     }
 
-    protected Frag(Parcel in) {
+    private Frag(Parcel in) {
         this.name = in.readString();
         this.simpleName = in.readString();
         this.parent = in.readByte() != 0;
-        this.children = new ArrayList<Frag>();
+        this.children = new ArrayList<>();
         in.readList(this.children, Frag.class.getClassLoader());
     }
 
