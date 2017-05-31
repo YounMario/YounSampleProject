@@ -37,6 +37,7 @@ dependencies {
     testCompile 'junit:junit:4.12'
     compile "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
     compile "com.android.support:recyclerview-v7:${rootProject.ext.supportLibVersion}"
+    compile "com.android.support:design:${rootProject.ext.supportLibVersion}"
     compile "com.github.eneim:Toro:${toro_latest_version}"
     compile 'io.reactivex:rxandroid:1.2.1'
     compile 'io.reactivex:rxjava:1.1.6'

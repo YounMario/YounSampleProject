@@ -53,9 +53,9 @@
         tools:text="How about yesterday morning ?"/>
 
     <View
-        android:background="#90000000"
+        android:background="#c6c6c6"
         android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
         android:layout_marginLeft="72dp"
-        android:layout_height="1px"/>
+        android:layout_height="1dp"/>
 </RelativeLayout>
