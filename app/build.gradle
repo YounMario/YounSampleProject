@@ -41,6 +41,7 @@ dependencies {
     compile "com.github.eneim:Toro:${toro_latest_version}"
     compile 'io.reactivex:rxandroid:1.2.1'
     compile 'io.reactivex:rxjava:1.1.6'
+    compile 'org.greenrobot:eventbus:3.0.0'
 
     compile ('com.jakewharton:butterknife:8.5.1')
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'

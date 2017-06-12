@@ -3,48 +3,49 @@ package com.younchen.younsampleproject.sys.loader;
 import android.app.LoaderManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
 import android.content.pm.PackageManager;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
-import android.support.v4.widget.SimpleCursorAdapter;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 
 import com.younchen.younsampleproject.R;
 import com.younchen.younsampleproject.commons.fragment.BaseFragment;
 import com.younchen.younsampleproject.commons.utils.PermissionsUtil;
+import com.younchen.younsampleproject.sys.loader.adapter.CleanItemAdapter;
+import com.younchen.younsampleproject.sys.loader.bean.CleanContactItem;
+import com.younchen.younsampleproject.sys.loader.bean.QueryEvent;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
+import java.util.List;
 
 import static android.Manifest.permission.READ_CONTACTS;
+import static android.Manifest.permission.WRITE_CONTACTS;
 
 /**
  * Created by Administrator on 2017/6/9.
  */
 
-public class DataLoaderFragment extends BaseFragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class DataLoaderFragment extends BaseFragment implements LoaderManager.LoaderCallbacks<List<CleanContactItem>> {
 
     private static final int DEFAULT_LOADER_ID = 1;
 
     private View mRootView;
-    private ListView mListView;
-    private SimpleCursorAdapter mCursorAdapter;
-    private BroadcastReceiver mReadContactsPermissionGrantedReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            //do refresh list here
-        }
-    };
+    private RecyclerView mListView;
+    private CleanItemAdapter mCleanItemAdapter;
 
     private final int READ_CONTACTS_PERMISSION_REQUEST_CODE = 100;
+    private ContactCleanLoader mContactLoader;
 
 
     @Nullable
@@ -59,6 +60,7 @@ public class DataLoaderFragment extends BaseFragment implements LoaderManager.Lo
         super.onViewCreated(view, savedInstanceState);
         mRootView = view;
         registerPermissionIfNeeded();
+        EventBus.getDefault().register(this);
     }
 
     private void initData() {
@@ -67,11 +69,9 @@ public class DataLoaderFragment extends BaseFragment implements LoaderManager.Lo
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     private void registerPermissionIfNeeded() {
-        if (!PermissionsUtil.hasPermission(getActivity(), READ_CONTACTS)) {
-            requestPermissions(new String[]{READ_CONTACTS},
+        if (!PermissionsUtil.hasPermission(getActivity(), READ_CONTACTS) || !PermissionsUtil.hasPermission(getActivity(), WRITE_CONTACTS)) {
+            requestPermissions(new String[]{READ_CONTACTS, WRITE_CONTACTS},
                     READ_CONTACTS_PERMISSION_REQUEST_CODE);
-            PermissionsUtil.registerPermissionReceiver(getActivity(),
-                    mReadContactsPermissionGrantedReceiver, READ_CONTACTS);
         } else {
             initData();
             initView(mRootView);
@@ -102,9 +102,13 @@ public class DataLoaderFragment extends BaseFragment implements LoaderManager.Lo
 
     @Override
     public void onStop() {
-        PermissionsUtil.unregisterPermissionReceiver(getActivity(),
-                mReadContactsPermissionGrantedReceiver);
         super.onStop();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -112,57 +116,46 @@ public class DataLoaderFragment extends BaseFragment implements LoaderManager.Lo
         super.onActivityCreated(savedInstanceState);
     }
 
-    private void initView(View view) {
-        // Create an empty adapter we will use to display the loaded data.
-        mCursorAdapter = new SimpleCursorAdapter(getActivity(),
-                android.R.layout.simple_list_item_2, null,
-                new String[]{ContactsContract.Contacts.DISPLAY_NAME, ContactsContract.Contacts.CONTACT_STATUS},
-                new int[]{android.R.id.text1, android.R.id.text2}, 0);
-        mListView = (ListView) view.findViewById(R.id.common_list_view);
-        mListView.setAdapter(mCursorAdapter);
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onDataSynEvent(QueryEvent event) {
+        getLoaderManager().restartLoader(DEFAULT_LOADER_ID, null, this);
     }
+
+    private void initView(View view) {
+        mListView = (RecyclerView) view.findViewById(R.id.common_list_view);
+        mListView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mCleanItemAdapter = new CleanItemAdapter(getActivity());
+        mCleanItemAdapter.setItemClickedListener(new CleanItemAdapter.OnItemClickedListener() {
+            @Override
+            public void onItemSelected(int position, CleanContactItem item) {
+                if(item.count > 0){
+                    CleanDetailActivity.start(getActivity(), item);
+                }
+            }
+        });
+        mListView.setAdapter(mCleanItemAdapter);
+    }
+
 
     @Override
     public void onBackKeyPressed() {
 
     }
 
-    static final String[] CONTACTS_SUMMARY_PROJECTION = new String[]{
-            ContactsContract.Contacts._ID,
-            ContactsContract.Contacts.DISPLAY_NAME,
-            ContactsContract.Contacts.CONTACT_STATUS,
-            ContactsContract.Contacts.CONTACT_PRESENCE,
-            ContactsContract.Contacts.PHOTO_ID,
-            ContactsContract.Contacts.LOOKUP_KEY,
-    };
-
     @Override
-    public Loader onCreateLoader(int id, Bundle args) {
-        // This is called when a new Loader needs to be created.  This
-        // sample only has one Loader, so we don't care about the ID.
-        // First, pick the base URI to use depending on whether we are
-        // currently filtering.
-        Uri baseUri;
-        baseUri = ContactsContract.Contacts.CONTENT_URI;
-
-        // Now create and return a CursorLoader that will take care of
-        // creating a Cursor for the data being displayed.
-        String select = "((" + ContactsContract.Contacts.DISPLAY_NAME + " NOTNULL) AND ("
-                + ContactsContract.Contacts.HAS_PHONE_NUMBER + "=1) AND ("
-                + ContactsContract.Contacts.DISPLAY_NAME + " != '' ))";
-        return new CursorLoader(getActivity(), baseUri,
-                CONTACTS_SUMMARY_PROJECTION, select, null,
-                ContactsContract.Contacts.DISPLAY_NAME + " COLLATE LOCALIZED ASC");
+    public Loader<List<CleanContactItem>> onCreateLoader(int id, Bundle args) {
+        mContactLoader = new ContactCleanLoader(getActivity());
+        return mContactLoader;
     }
 
     @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        mCursorAdapter.swapCursor(data);
+    public void onLoadFinished(Loader<List<CleanContactItem>> loader, List<CleanContactItem> data) {
+        mCleanItemAdapter.setData(data);
     }
 
 
     @Override
     public void onLoaderReset(Loader loader) {
-        mCursorAdapter.swapCursor(null);
+        mCleanItemAdapter.setData(null);
     }
 }

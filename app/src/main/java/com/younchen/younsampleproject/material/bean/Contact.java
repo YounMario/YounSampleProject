@@ -12,4 +12,9 @@ public class Contact implements Serializable{
     public String headImageUrl;
     public String message;
 
+    public int id;
+    public int status;
+    public int presence;
+    public int photoId;
+    public String lookUpKey;
 }

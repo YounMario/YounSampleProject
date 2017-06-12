@@ -7,4 +7,5 @@
 
     <!--base color-->
     <color name="colorWhite">#FFFFFF</color>
+    <color name="gray">#6c6c6c</color>
 </resources>

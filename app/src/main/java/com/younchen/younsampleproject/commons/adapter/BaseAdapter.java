@@ -43,6 +43,11 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<ViewHolder> {
         notifyDataSetChanged();
     }
 
+    public void remove(List<T> selected){
+        data.removeAll(selected);
+        notifyDataSetChanged();
+    }
+
     public T getItem(int postion) {
         return data.get(postion);
     }
