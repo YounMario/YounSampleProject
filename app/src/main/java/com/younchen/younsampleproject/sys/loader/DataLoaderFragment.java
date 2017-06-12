@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
@@ -33,7 +34,7 @@ public class DataLoaderFragment extends BaseFragment implements LoaderManager.Lo
 
     private static final int DEFAULT_LOADER_ID = 1;
 
-
+    private View mRootView;
     private ListView mListView;
     private SimpleCursorAdapter mCursorAdapter;
     private BroadcastReceiver mReadContactsPermissionGrantedReceiver = new BroadcastReceiver() {
@@ -52,30 +53,51 @@ public class DataLoaderFragment extends BaseFragment implements LoaderManager.Lo
         return inflater.inflate(R.layout.layout_common_list, container, false);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if (PermissionsUtil.hasPermission(getActivity(), READ_CONTACTS)) {
-            initView(view);
-        }
+        mRootView = view;
+        registerPermissionIfNeeded();
+    }
 
+    private void initData() {
+        getLoaderManager().initLoader(DEFAULT_LOADER_ID, null, this);
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
+    private void registerPermissionIfNeeded() {
+        if (!PermissionsUtil.hasPermission(getActivity(), READ_CONTACTS)) {
+            requestPermissions(new String[]{READ_CONTACTS},
+                    READ_CONTACTS_PERMISSION_REQUEST_CODE);
+            PermissionsUtil.registerPermissionReceiver(getActivity(),
+                    mReadContactsPermissionGrantedReceiver, READ_CONTACTS);
+        } else {
+            initData();
+            initView(mRootView);
+        }
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == READ_CONTACTS_PERMISSION_REQUEST_CODE) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                initData();
+                initView(mRootView);
+            }
+        }
+    }
+
     @Override
     public void onResume() {
         super.onResume();
-        if(!PermissionsUtil.hasPermission(getActivity(), READ_CONTACTS)){
-            getActivity().requestPermissions( new String[]{READ_CONTACTS},
-                    READ_CONTACTS_PERMISSION_REQUEST_CODE);
-        }
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        PermissionsUtil.registerPermissionReceiver(getActivity(),
-                mReadContactsPermissionGrantedReceiver, READ_CONTACTS);
     }
 
     @Override
@@ -88,7 +110,6 @@ public class DataLoaderFragment extends BaseFragment implements LoaderManager.Lo
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        getLoaderManager().initLoader(DEFAULT_LOADER_ID, null, this);
     }
 
     private void initView(View view) {
