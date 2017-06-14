@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.provider.ContactsContract;
 import android.util.LruCache;
 import android.util.SparseArray;
+import android.util.SparseBooleanArray;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
@@ -29,8 +30,10 @@ import java.util.ArrayList;
 public class CleanDetailAdapter extends BaseAdapter<ContactItem> {
 
     private ActionListener mCheckChangeListener;
-    private SparseArray<ContactItem> mSelectedItems;
+    private SparseBooleanArray mSelectedItems;
     private Context mContext;
+
+    private final int KEY_OF_TAG = 0x99999;
 
     private final int cacheSize = 1024 * 1024 * 2;
 
@@ -43,7 +46,7 @@ public class CleanDetailAdapter extends BaseAdapter<ContactItem> {
 
     public CleanDetailAdapter(Context context) {
         super(context, R.layout.item_contact_style2);
-        this.mSelectedItems = new SparseArray<>();
+        this.mSelectedItems = new SparseBooleanArray();
         this.mContext = context;
     }
 
@@ -51,22 +54,24 @@ public class CleanDetailAdapter extends BaseAdapter<ContactItem> {
     public void covert(ViewHolder holder, final ContactItem item, final int position) {
         holder.setText(R.id.txt_title, item.name);
         CheckBox checkBox = (CheckBox) holder.getView(R.id.select_box);
-        //todo check 乱序
+        checkBox.setTag(position);
         checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                int pos = (int) buttonView.getTag();
                 synchronized (mLock) {
-                    if (isChecked && mSelectedItems.get(position) == null) {
-                        mSelectedItems.put(position, item);
-                    } else if (!isChecked && mSelectedItems.get(position) != null) {
-                        mSelectedItems.remove(position);
+                    if (isChecked) {
+                        mSelectedItems.put(pos, true);
+                    } else {
+                        mSelectedItems.delete(pos);
                     }
                 }
                 if (mCheckChangeListener != null) {
-                    mCheckChangeListener.onCheckChanged(position, isChecked);
+                    mCheckChangeListener.onCheckChanged(pos, isChecked);
                 }
             }
         });
+        checkBox.setChecked(mSelectedItems.get(position, false));
         bindImage((ImageView) holder.getView(R.id.user_image), item);
     }
 
@@ -124,7 +129,8 @@ public class CleanDetailAdapter extends BaseAdapter<ContactItem> {
             StringBuilder keys = new StringBuilder();
             keys.append("(");
             for (int i = 0; i < mSelectedItems.size(); i++) {
-                ContactItem item = mSelectedItems.get(mSelectedItems.keyAt(i));
+                int pos = mSelectedItems.keyAt(i);
+                ContactItem item = getItem(pos);
                 itemsToRemove.add(item);
                 keys.append('\'').append(item.lookUpKey).append('\'').append(",");
             }
