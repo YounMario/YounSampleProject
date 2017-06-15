@@ -2,11 +2,8 @@ package com.younchen.younsampleproject.commons.adapter;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
-import com.younchen.younsampleproject.commons.fragment.Frag;
 import com.younchen.younsampleproject.commons.holder.ViewHolder;
 
 import java.util.LinkedList;
@@ -79,5 +76,13 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<ViewHolder> {
     public void setData(List<T> data) {
         this.data = data;
         notifyDataSetChanged();
+    }
+
+    public void delete(T item) {
+        int index = data.indexOf(item);
+        if (index > -1 && index < data.size()) {
+            data.remove(index);
+        }
+        notifyItemRemoved(index);
     }
 }

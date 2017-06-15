@@ -4,6 +4,7 @@ import android.content.AsyncTaskLoader;
 import android.content.Context;
 import android.database.ContentObserver;
 import android.database.Cursor;
+import android.database.MergeCursor;
 import android.os.CancellationSignal;
 import android.os.OperationCanceledException;
 import android.provider.ContactsContract;
@@ -36,6 +37,7 @@ public class ContactCleanLoader extends AsyncTaskLoader<List<CleanContactItem>> 
             ContactsContract.Contacts.CONTACT_PRESENCE,
             ContactsContract.Contacts.PHOTO_ID,
             ContactsContract.Contacts.LOOKUP_KEY,
+            ContactsContract.Contacts.STARRED
     };
 
     /* Runs on a worker thread */
@@ -59,7 +61,7 @@ public class ContactCleanLoader extends AsyncTaskLoader<List<CleanContactItem>> 
                     noPhoneItem.title = "No Phone";
                     noPhoneItem.type = CleanContactItem.CLEAN_TYPE_NO_PHONE;
                     data.add(noPhoneItem);
-                    noPhoneCursor.close();
+                    //noPhoneCursor.close();
                 }
             }
 
@@ -67,11 +69,13 @@ public class ContactCleanLoader extends AsyncTaskLoader<List<CleanContactItem>> 
             String noNameSelect = noNameSelectString();
             Cursor noNameCursor = getContext().getContentResolver().query(ContactsContract.Contacts.CONTENT_URI, CONTACTS_SUMMARY_PROJECTION, noNameSelect, null, null, mCancellationSignal);
             if (noNameCursor != null) {
+                noNameCursor = new MergeCursor(new Cursor[]{noNameCursor, noPhoneCursor});
                 CleanContactItem noNameItem = parseCursor(noNameCursor);
                 if (noNameItem != null) {
                     noNameItem.title = "No Name";
                     noNameItem.type = CleanContactItem.CLEAN_TYPE_NO_NAME;
                     data.add(noNameItem);
+                    noPhoneCursor.close();
                     noNameCursor.close();
                 }
             }
@@ -113,6 +117,7 @@ public class ContactCleanLoader extends AsyncTaskLoader<List<CleanContactItem>> 
             contact.presence = cursor.getInt(cursor.getColumnIndex(CONTACTS_SUMMARY_PROJECTION[3]));
             contact.photoId = cursor.getInt(cursor.getColumnIndex(CONTACTS_SUMMARY_PROJECTION[4]));
             contact.lookUpKey = cursor.getString(cursor.getColumnIndex(CONTACTS_SUMMARY_PROJECTION[5]));
+            contact.stared = cursor.getInt(cursor.getColumnIndex(CONTACTS_SUMMARY_PROJECTION[6]));
             cleanContactItem.addContact(contact);
         }
         return cleanContactItem;

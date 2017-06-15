@@ -6,6 +6,10 @@
 
 
     <!--base color-->
-    <color name="colorWhite">#FFFFFF</color>
+    <color name="color_white">#FFFFFF</color>
     <color name="gray">#6c6c6c</color>
+
+    <!--item color-->
+    <color name="item_color_front">#FFFFFF</color>
+    <color name="item_color_back">#0D000000</color>
 </resources>
