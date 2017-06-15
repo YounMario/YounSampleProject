@@ -10,7 +10,7 @@ import android.view.View;
 import android.widget.Button;
 
 import com.younchen.younsampleproject.R;
-import com.younchen.younsampleproject.sys.loader.adapter.CleanDetailAdapter;
+import com.younchen.younsampleproject.sys.loader.adapter.CleanContactAdapter;
 import com.younchen.younsampleproject.sys.loader.bean.CleanContactItem;
 import com.younchen.younsampleproject.sys.loader.bean.ContactItem;
 import com.younchen.younsampleproject.sys.loader.bean.QueryEvent;
@@ -27,7 +27,7 @@ public class CleanDetailActivity extends AppCompatActivity {
     private Button mCleanBtn;
 
     private List<ContactItem> mContactList;
-    private CleanDetailAdapter mCleanDetailAdapter;
+    private CleanContactAdapter mCleanDetailAdapter;
 
     private String mCleanBtnTextPrefix;
 
@@ -50,7 +50,7 @@ public class CleanDetailActivity extends AppCompatActivity {
         mRecycleView = (RecyclerView) findViewById(R.id.contact_list);
         mRecycleView.setLayoutManager(new LinearLayoutManager(this));
 
-        mCleanDetailAdapter = new CleanDetailAdapter(this);
+        mCleanDetailAdapter = new CleanContactAdapter(this);
         mRecycleView.setAdapter(mCleanDetailAdapter);
         if (mContactList != null) {
             mCleanDetailAdapter.setData(mContactList);
@@ -63,7 +63,7 @@ public class CleanDetailActivity extends AppCompatActivity {
             }
         });
 
-        mCleanDetailAdapter.setActionListener(new CleanDetailAdapter.ActionListener() {
+        mCleanDetailAdapter.setActionListener(new CleanContactAdapter.ActionListener() {
             @Override
             public void onCheckChanged(int position, boolean isChecked) {
                 updateCleanBtn();

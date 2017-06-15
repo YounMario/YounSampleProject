@@ -28,7 +28,7 @@ import java.util.ArrayList;
  * Created by Administrator on 2017/6/12.
  */
 
-public class CleanDetailAdapter extends BaseAdapter<ContactItem> {
+public class CleanContactAdapter extends BaseAdapter<ContactItem> {
 
     private ActionListener mCheckChangeListener;
     private SparseBooleanArray mSelectedItems;
@@ -46,7 +46,7 @@ public class CleanDetailAdapter extends BaseAdapter<ContactItem> {
             ContactsContract.CommonDataKinds.Photo.PHOTO
     };
 
-    public CleanDetailAdapter(Context context) {
+    public CleanContactAdapter(Context context) {
         super(context, R.layout.item_contact_style2);
         this.mSelectedItems = new SparseBooleanArray();
         this.mContext = context;
@@ -56,7 +56,7 @@ public class CleanDetailAdapter extends BaseAdapter<ContactItem> {
             public void onDelete(Object obj) {
                 ContactItem item = (ContactItem) obj;
                 removeContact(item);
-                CleanDetailAdapter.this.delete(item);
+                CleanContactAdapter.this.delete(item);
             }
         });
     }

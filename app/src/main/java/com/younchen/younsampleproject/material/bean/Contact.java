@@ -17,4 +17,5 @@ public class Contact implements Serializable{
     public int presence;
     public int photoId;
     public String lookUpKey;
+    public int stared;
 }

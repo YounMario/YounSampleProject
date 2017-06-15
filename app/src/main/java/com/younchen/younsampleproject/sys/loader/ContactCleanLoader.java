@@ -27,7 +27,6 @@ public class ContactCleanLoader extends AsyncTaskLoader<List<CleanContactItem>> 
 
     private CancellationSignal mCancellationSignal;
 
-    private final ContentObserver mObserver;
     private List<CleanContactItem> mData;
 
     static final String[] CONTACTS_SUMMARY_PROJECTION = new String[]{
@@ -150,7 +149,6 @@ public class ContactCleanLoader extends AsyncTaskLoader<List<CleanContactItem>> 
 
     public ContactCleanLoader(Context context) {
         super(context);
-        mObserver = new ForceLoadContentObserver();
     }
 
     /**
