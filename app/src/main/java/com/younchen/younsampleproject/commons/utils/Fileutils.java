@@ -24,6 +24,9 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.regex.Pattern;
 
+/**
+ * Created by Administrator on 2017/6/19.
+ */
 public class FileUtils {
 
     /**
