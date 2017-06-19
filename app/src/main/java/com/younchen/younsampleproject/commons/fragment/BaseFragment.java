@@ -9,6 +9,8 @@ import android.view.View;
 
 import com.younchen.younsampleproject.commons.activity.BaseActivity;
 
+import butterknife.ButterKnife;
+
 /**
  * Created by Administrator on 2017/4/11.
  */
@@ -35,6 +37,7 @@ public abstract class BaseFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        ButterKnife.bind(getActivity());
         mRootView = view;
         mRootView.setFocusableInTouchMode(true);
         mRootView.requestFocus();

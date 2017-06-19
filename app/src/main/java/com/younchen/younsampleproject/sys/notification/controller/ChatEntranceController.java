@@ -4,8 +4,8 @@ import android.app.PendingIntent;
 import android.os.Bundle;
 import android.os.Parcel;
 
-import com.younchen.younsampleproject.commons.utils.Evn;
 import com.younchen.younsampleproject.commons.utils.FileUtils;
+import com.younchen.younsampleproject.commons.utils.Evn;
 import com.younchen.younsampleproject.commons.utils.ParcelableUtil;
 import com.younchen.younsampleproject.material.Constants;
 import com.younchen.younsampleproject.sys.notification.model.ChatEntrance;

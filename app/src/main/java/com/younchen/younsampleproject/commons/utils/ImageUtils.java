@@ -11,4 +11,5 @@ public class ImageUtils {
     public static Bitmap copy(Bitmap source) {
         return source.copy(source.getConfig(), true);
     }
+
 }
