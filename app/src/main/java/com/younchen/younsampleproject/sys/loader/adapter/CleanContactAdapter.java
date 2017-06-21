@@ -1,5 +1,7 @@
 package com.younchen.younsampleproject.sys.loader.adapter;
 
+import android.content.ContentProviderOperation;
+import android.content.ContentProviderResult;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
@@ -69,19 +71,17 @@ public class CleanContactAdapter extends BaseAdapter<ContactItem> {
         checkBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                int pos = (int) buttonView.getTag();
-                synchronized (mLock) {
-                    if (isChecked) {
-                        mSelectedItems.put(pos, true);
-                    } else {
-                        mSelectedItems.delete(pos);
-                    }
-                }
-                if (mCheckChangeListener != null) {
-                    mCheckChangeListener.onCheckChanged(pos, isChecked);
-                }
+                saveAndNotifyCheckStatus(buttonView, isChecked, false);
             }
         });
+
+        holder.setOnItemClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                saveAndNotifyCheckStatus(checkBox, !checkBox.isChecked(), true);
+            }
+        });
+
         checkBox.setChecked(mSelectedItems.get(position, false));
         bindImage((ImageView) holder.getView(R.id.user_image), item);
         holder.setOnItemLongClickListener(new View.OnLongClickListener() {
@@ -91,6 +91,23 @@ public class CleanContactAdapter extends BaseAdapter<ContactItem> {
                 return true;
             }
         });
+    }
+
+    private void saveAndNotifyCheckStatus(CompoundButton buttonView, boolean isCheck, boolean notifyItemChanged) {
+        int pos = (int) buttonView.getTag();
+        synchronized (mLock) {
+            if (isCheck) {
+                mSelectedItems.put(pos, true);
+            } else {
+                mSelectedItems.delete(pos);
+            }
+        }
+        if (mCheckChangeListener != null) {
+            mCheckChangeListener.onCheckChanged(pos, isCheck);
+        }
+        if (notifyItemChanged) {
+            notifyItemChanged(pos);
+        }
     }
 
 
@@ -155,25 +172,33 @@ public class CleanContactAdapter extends BaseAdapter<ContactItem> {
                 int pos = mSelectedItems.keyAt(i);
                 ContactItem item = getItem(pos);
                 itemsToRemove.add(item);
-                keys.append('\'').append(item.lookUpKey).append('\'').append(",");
             }
-            keys.deleteCharAt(keys.length() - 1).append(")");
 
 
+            ContentResolver contentResolver = mContext.getContentResolver();
             int deletedCount = 0;
+            ArrayList<ContentProviderOperation> ops = new ArrayList<>();
             for (ContactItem item : itemsToRemove) {
-                int result = removeContact(item);
-                if (result > 0) {
-                    deletedCount++;
-                }
+                //针对没有电话号的用户无法删除。
+//                Uri uri = Uri.withAppendedPath(ContactsContract.Contacts.CONTENT_LOOKUP_URI, item.lookUpKey);
+//                ops.add(ContentProviderOperation.newDelete(uri).build());
+
+                Uri uri = Uri.withAppendedPath(ContactsContract.Contacts.CONTENT_URI, String.valueOf(item.id));
+                ops.add(ContentProviderOperation.newDelete(uri).build());
             }
-            //todo 批量删除not working
-            //int rowCount = mContext.getContentResolver().delete(ContactsContract.Contacts.CONTENT_URI, getWhereString(keys.toString()), null);
+            try {
+                ContentProviderResult[] results = contentResolver.applyBatch(ContactsContract.AUTHORITY, ops);
+                for (ContentProviderResult result : results) {
+                    deletedCount = deletedCount + result.count;
+                }
+            } catch (Exception e) {
+                e.getMessage();
+            }
             if (deletedCount > 0) {
                 mSelectedItems.clear();
                 remove(itemsToRemove);
+                mCheckChangeListener.onClearFinished();
             }
-            mCheckChangeListener.onClearFinished();
         }
     }
 
