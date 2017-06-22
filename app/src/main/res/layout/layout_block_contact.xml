@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <EditText
+        android:hint="input tel number to block"
+        android:id="@+id/edit_txt_phone_number"
+        android:layout_width="match_parent"
+        android:layout_margin="16dp"
+        android:layout_height="48dp" />
+
+    <Button
+        android:id="@+id/btn_save"
+        android:layout_width="200dp"
+        android:layout_height="48dp"
+        android:text="save"
+        android:layout_marginTop="18dp"
+        android:layout_below="@+id/edit_txt_phone_number"
+        android:layout_centerHorizontal="true" />
+</RelativeLayout>

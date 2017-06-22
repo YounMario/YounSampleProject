@@ -73,7 +73,11 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".sys.loader.contact.CleanDetailActivity"></activity>
+        <activity android:name=".sys.loader.contact.CleanDetailActivity"/>
+        
+        <provider
+            android:authorities="com.younchen.younsample.blockedcontact.provider"
+            android:name=".sys.provider.BlockedContactsProvider"/>
     </application>
 
 </manifest>

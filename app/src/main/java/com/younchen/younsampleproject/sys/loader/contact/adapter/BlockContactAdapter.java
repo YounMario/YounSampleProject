@@ -7,14 +7,16 @@ import android.database.Cursor;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.younchen.younsampleproject.R;
+import com.younchen.younsampleproject.sys.provider.BlockedContract;
 
 /**
  * Created by Administrator on 2017/6/22.
  */
 
-public class BlockContactAdapter extends CustomCursorAdapter{
+public class BlockContactAdapter extends CustomCursorAdapter {
 
 
     public BlockContactAdapter(Context context) {
@@ -32,6 +34,7 @@ public class BlockContactAdapter extends CustomCursorAdapter{
     @Override
     public void configureLoader(Loader<Cursor> loader) {
         CursorLoader cursorLoader = (CursorLoader) loader;
+        cursorLoader.setUri(BlockedContract.BlockedContacts.BlockedContactUri);
     }
 
     @Override
@@ -41,6 +44,7 @@ public class BlockContactAdapter extends CustomCursorAdapter{
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
-
+        TextView textView = (TextView) view.findViewById(R.id.txt_contact_name);
+        textView.setText(cursor.getString(cursor.getColumnIndex(BlockedContract.BlockedContactColumns.PHONE_NUMBER)));
     }
 }

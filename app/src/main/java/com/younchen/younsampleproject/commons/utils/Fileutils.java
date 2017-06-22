@@ -612,4 +612,52 @@ public class FileUtils {
             return false;
         return new File(filePath).exists();
     }
+
+    public static String addSlash(final String path) {
+        if (TextUtils.isEmpty(path)) {
+            return File.separator;
+        }
+
+        if (path.charAt(path.length() - 1) != File.separatorChar) {
+            return path + File.separatorChar;
+        }
+
+        return path;
+    }
+
+    public static boolean copyFile(String fromPath, String toPath) {
+        /**
+         * 拷贝文件
+         *
+         */
+        boolean result = false;
+        FileInputStream from = null;
+        FileOutputStream to = null;
+        try {
+            from = new FileInputStream(fromPath);
+            to = new FileOutputStream(toPath);
+            byte[] buffer = new byte[4096];
+            int bytes_read;
+            while ((bytes_read = from.read(buffer)) != -1)
+                to.write(buffer, 0, bytes_read);
+            result = true;
+        } catch (IOException e) {
+            if (e != null) {
+
+            }
+            result = false;
+        } finally {
+            if (from != null)
+                try {
+                    from.close();
+                } catch (IOException e) {
+                }
+            if (to != null)
+                try {
+                    to.close();
+                } catch (IOException e) {
+                }
+        }
+        return result;
+    }
 }
