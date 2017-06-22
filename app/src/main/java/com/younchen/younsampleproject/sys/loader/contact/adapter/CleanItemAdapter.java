@@ -1,4 +1,4 @@
-package com.younchen.younsampleproject.sys.loader.adapter;
+package com.younchen.younsampleproject.sys.loader.contact.adapter;
 
 import android.content.Context;
 import android.view.View;
@@ -7,7 +7,7 @@ import android.widget.ImageView;
 import com.younchen.younsampleproject.R;
 import com.younchen.younsampleproject.commons.adapter.BaseAdapter;
 import com.younchen.younsampleproject.commons.holder.ViewHolder;
-import com.younchen.younsampleproject.sys.loader.bean.CleanContactItem;
+import com.younchen.younsampleproject.sys.loader.contact.bean.CleanContactItem;
 
 /**
  * Created by Administrator on 2017/6/12.

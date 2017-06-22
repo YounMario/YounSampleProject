@@ -1,4 +1,4 @@
-package com.younchen.younsampleproject.sys.loader;
+package com.younchen.younsampleproject.sys.loader.contact;
 
 import android.content.ContentResolver;
 import android.content.Context;

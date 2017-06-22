@@ -1,4 +1,4 @@
-package com.younchen.younsampleproject.sys.loader;
+package com.younchen.younsampleproject.sys.loader.contact;
 
 import android.content.Context;
 import android.content.Intent;
@@ -10,10 +10,10 @@ import android.view.View;
 import android.widget.Button;
 
 import com.younchen.younsampleproject.R;
-import com.younchen.younsampleproject.sys.loader.adapter.CleanContactAdapter;
-import com.younchen.younsampleproject.sys.loader.bean.CleanContactItem;
-import com.younchen.younsampleproject.sys.loader.bean.ContactItem;
-import com.younchen.younsampleproject.sys.loader.bean.QueryEvent;
+import com.younchen.younsampleproject.sys.loader.contact.adapter.CleanContactAdapter;
+import com.younchen.younsampleproject.sys.loader.contact.bean.CleanContactItem;
+import com.younchen.younsampleproject.sys.loader.contact.bean.ContactItem;
+import com.younchen.younsampleproject.sys.loader.contact.bean.QueryEvent;
 
 import org.greenrobot.eventbus.EventBus;
 

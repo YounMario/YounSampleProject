@@ -1,4 +1,4 @@
-package com.younchen.younsampleproject.sys.loader.bean;
+package com.younchen.younsampleproject.sys.loader.contact.bean;
 
 
 import java.io.Serializable;

@@ -1,4 +1,4 @@
-package com.younchen.younsampleproject.sys.loader.adapter;
+package com.younchen.younsampleproject.sys.loader.contact.adapter;
 
 import android.content.ContentProviderOperation;
 import android.content.ContentProviderResult;
@@ -21,7 +21,7 @@ import com.younchen.younsampleproject.R;
 import com.younchen.younsampleproject.commons.adapter.BaseAdapter;
 import com.younchen.younsampleproject.commons.holder.ViewHolder;
 import com.younchen.younsampleproject.sys.ItemOptionMenu;
-import com.younchen.younsampleproject.sys.loader.bean.ContactItem;
+import com.younchen.younsampleproject.sys.loader.contact.bean.ContactItem;
 
 import java.util.ArrayList;
 

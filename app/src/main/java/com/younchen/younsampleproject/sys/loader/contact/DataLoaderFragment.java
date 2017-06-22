@@ -1,10 +1,7 @@
-package com.younchen.younsampleproject.sys.loader;
+package com.younchen.younsampleproject.sys.loader.contact;
 
 import android.Manifest;
 import android.app.LoaderManager;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
 import android.content.Loader;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -20,9 +17,9 @@ import android.view.ViewGroup;
 import com.younchen.younsampleproject.R;
 import com.younchen.younsampleproject.commons.fragment.BaseFragment;
 import com.younchen.younsampleproject.commons.utils.PermissionsUtil;
-import com.younchen.younsampleproject.sys.loader.adapter.CleanItemAdapter;
-import com.younchen.younsampleproject.sys.loader.bean.CleanContactItem;
-import com.younchen.younsampleproject.sys.loader.bean.QueryEvent;
+import com.younchen.younsampleproject.sys.loader.contact.adapter.CleanItemAdapter;
+import com.younchen.younsampleproject.sys.loader.contact.bean.CleanContactItem;
+import com.younchen.younsampleproject.sys.loader.contact.bean.QueryEvent;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;

@@ -1,18 +1,11 @@
-package com.younchen.younsampleproject.sys.loader;
+package com.younchen.younsampleproject.sys.loader.contact;
 
 import android.app.LoaderManager;
 import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ListView;
 
-import com.younchen.younsampleproject.R;
-import com.younchen.younsampleproject.commons.fragment.BaseFragment;
-import com.younchen.younsampleproject.sys.loader.adapter.ContactAdapter;
+import com.younchen.younsampleproject.sys.loader.contact.adapter.ContactAdapter;
 
 /**
  * Created by Administrator on 2017/6/15.

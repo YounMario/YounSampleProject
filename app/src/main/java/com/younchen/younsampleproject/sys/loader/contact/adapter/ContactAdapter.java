@@ -1,4 +1,4 @@
-package com.younchen.younsampleproject.sys.loader.adapter;
+package com.younchen.younsampleproject.sys.loader.contact.adapter;
 
 import android.content.ContentUris;
 import android.content.Context;

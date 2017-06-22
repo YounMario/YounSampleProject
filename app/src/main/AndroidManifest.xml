@@ -73,7 +73,7 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".sys.loader.CleanDetailActivity"></activity>
+        <activity android:name=".sys.loader.contact.CleanDetailActivity"></activity>
     </application>
 
 </manifest>

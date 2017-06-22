@@ -1,24 +1,21 @@
-package com.younchen.younsampleproject.sys.loader;
+package com.younchen.younsampleproject.sys.loader.contact;
 
 import android.content.AsyncTaskLoader;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.MergeCursor;
-import android.net.Uri;
 import android.os.CancellationSignal;
 import android.os.OperationCanceledException;
-import android.provider.Contacts;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 
-import com.younchen.younsampleproject.sys.loader.bean.CleanContactItem;
-import com.younchen.younsampleproject.sys.loader.bean.ContactItem;
+import com.younchen.younsampleproject.sys.loader.contact.bean.CleanContactItem;
+import com.younchen.younsampleproject.sys.loader.contact.bean.ContactItem;
 
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
-import android.provider.Contacts.People;
 
 /**
  * Created by Administrator on 2017/6/12.

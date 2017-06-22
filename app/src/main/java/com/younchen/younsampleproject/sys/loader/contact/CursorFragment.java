@@ -1,4 +1,4 @@
-package com.younchen.younsampleproject.sys.loader;
+package com.younchen.younsampleproject.sys.loader.contact;
 
 import android.app.LoaderManager;
 import android.content.CursorLoader;
@@ -12,7 +12,7 @@ import android.widget.ListView;
 
 import com.younchen.younsampleproject.R;
 import com.younchen.younsampleproject.commons.fragment.BaseFragment;
-import com.younchen.younsampleproject.sys.loader.adapter.CustomCursorAdapter;
+import com.younchen.younsampleproject.sys.loader.contact.adapter.CustomCursorAdapter;
 
 
 /**
