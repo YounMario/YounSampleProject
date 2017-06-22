@@ -16,6 +16,7 @@ import com.younchen.younsampleproject.commons.adapter.FragAdapter;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.lang.reflect.Modifier;
 import java.util.Collections;
 import java.util.List;
 
@@ -89,7 +90,7 @@ public class LauncherFragment extends BaseFragment {
                     @Override
                     public boolean accept(File dir, String filename) {
                         try {
-                            if (BaseFragment.class.getName().equals(filename) || LauncherFragment.class.getName().equals(filename)) {
+                            if (isAbstractClass(filename) || LauncherFragment.class.getName().equals(filename)) {
                                 return false;
                             }
                             return BaseFragment.class.isAssignableFrom(Class.forName(filename));
@@ -106,6 +107,16 @@ public class LauncherFragment extends BaseFragment {
             return mFrag.getChildren();
         }
         return Collections.EMPTY_LIST;
+    }
+
+    private boolean isAbstractClass(String filename) {
+        try {
+            Class<?> clazz = Class.forName(filename);
+            return Modifier.isAbstract(clazz.getModifiers());
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return true;
     }
 
     @Override

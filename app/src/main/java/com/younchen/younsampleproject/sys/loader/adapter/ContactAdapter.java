@@ -2,6 +2,7 @@ package com.younchen.younsampleproject.sys.loader.adapter;
 
 import android.content.ContentUris;
 import android.content.Context;
+import android.content.Loader;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -11,18 +12,16 @@ import android.util.LruCache;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.CursorAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.younchen.younsampleproject.R;
-import com.younchen.younsampleproject.sys.loader.bean.ContactItem;
 
 /**
  * Created by Administrator on 2017/6/15.
  */
 
-public class ContactAdapter extends CursorAdapter {
+public class ContactAdapter extends CustomCursorAdapter {
 
 
     static final String[] CONTACTS_SUMMARY_PROJECTION = new String[]{
@@ -109,5 +108,10 @@ public class ContactAdapter extends CursorAdapter {
         int id = cursor.getInt(cursor.getColumnIndex(CONTACTS_SUMMARY_PROJECTION[4]));
         int started = cursor.getInt(cursor.getColumnIndex(CONTACTS_SUMMARY_PROJECTION[6]));
         bindImage(headImage, id, started);
+    }
+
+    @Override
+    public void configureLoader(Loader<Cursor> loader) {
+
     }
 }

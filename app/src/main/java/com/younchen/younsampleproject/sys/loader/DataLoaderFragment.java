@@ -1,5 +1,6 @@
 package com.younchen.younsampleproject.sys.loader;
 
+import android.Manifest;
 import android.app.LoaderManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -69,8 +70,11 @@ public class DataLoaderFragment extends BaseFragment implements LoaderManager.Lo
 
     @RequiresApi(api = Build.VERSION_CODES.M)
     private void registerPermissionIfNeeded() {
-        if (!PermissionsUtil.hasPermission(getActivity(), READ_CONTACTS) || !PermissionsUtil.hasPermission(getActivity(), WRITE_CONTACTS)) {
-            requestPermissions(new String[]{READ_CONTACTS, WRITE_CONTACTS},
+        if (!PermissionsUtil.hasPermission(getActivity(), READ_CONTACTS) ||
+                !PermissionsUtil.hasPermission(getActivity(), WRITE_CONTACTS) ||
+                !PermissionsUtil.hasPermission(getActivity(), Manifest.permission.READ_CALL_LOG) ||
+                !PermissionsUtil.hasPermission(getActivity(), Manifest.permission.WRITE_CALL_LOG)) {
+            requestPermissions(new String[]{READ_CONTACTS, WRITE_CONTACTS, Manifest.permission.READ_CALL_LOG, Manifest.permission.WRITE_CALL_LOG},
                     READ_CONTACTS_PERMISSION_REQUEST_CODE);
         } else {
             initData();

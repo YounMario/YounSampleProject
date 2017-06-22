@@ -1,6 +1,5 @@
 package com.younchen.younsampleproject.sys.loader;
 
-import android.app.Activity;
 import android.app.LoaderManager;
 import android.content.Loader;
 import android.database.Cursor;
@@ -19,36 +18,16 @@ import com.younchen.younsampleproject.sys.loader.adapter.ContactAdapter;
  * Created by Administrator on 2017/6/15.
  */
 
-public class ContactListFragment extends BaseFragment implements LoaderManager.LoaderCallbacks<Cursor> {
+public class ContactListFragment extends CursorFragment<ContactAdapter> implements LoaderManager.LoaderCallbacks<Cursor> {
 
     ContactAdapter mAdapter;
-    ListView mRecycleView;
     ContactLoader mContactLoader;
-    private int DEFAULT_LOADER_ID = 2;
 
-    @Nullable
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.layout_contact, container, false);
-    }
 
     @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        initView(view);
-        initData();
-    }
-
-
-    private void initData() {
-        getActivity().getLoaderManager().initLoader(DEFAULT_LOADER_ID, null, this);
-    }
-
-    private void initView(View view) {
-        mRecycleView = (ListView) view.findViewById(R.id.contact_list_view);
+    protected ContactAdapter createAdapter() {
         mAdapter = new ContactAdapter(getActivity());
-        mRecycleView.setAdapter(mAdapter);
-
+        return mAdapter;
     }
 
     @Override
@@ -56,6 +35,11 @@ public class ContactListFragment extends BaseFragment implements LoaderManager.L
 
     }
 
+    @Override
+    protected void initData() {
+        super.initData();
+        setLoaderId(2);
+    }
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
