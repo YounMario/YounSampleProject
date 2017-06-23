@@ -37,8 +37,8 @@ public abstract class BaseFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ButterKnife.bind(getActivity());
         mRootView = view;
+        ButterKnife.bind(this, mRootView);
         mRootView.setFocusableInTouchMode(true);
         mRootView.requestFocus();
         //一种监听back键的方法
