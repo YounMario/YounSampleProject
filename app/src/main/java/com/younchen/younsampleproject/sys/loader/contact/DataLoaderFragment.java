@@ -70,8 +70,9 @@ public class DataLoaderFragment extends BaseFragment implements LoaderManager.Lo
         if (!PermissionsUtil.hasPermission(getActivity(), READ_CONTACTS) ||
                 !PermissionsUtil.hasPermission(getActivity(), WRITE_CONTACTS) ||
                 !PermissionsUtil.hasPermission(getActivity(), Manifest.permission.READ_CALL_LOG) ||
-                !PermissionsUtil.hasPermission(getActivity(), Manifest.permission.WRITE_CALL_LOG)) {
-            requestPermissions(new String[]{READ_CONTACTS, WRITE_CONTACTS, Manifest.permission.READ_CALL_LOG, Manifest.permission.WRITE_CALL_LOG},
+                !PermissionsUtil.hasPermission(getActivity(), Manifest.permission.WRITE_CALL_LOG) ||
+                !PermissionsUtil.hasPermission(getActivity(), Manifest.permission.READ_PHONE_STATE)) {
+            requestPermissions(new String[]{READ_CONTACTS, WRITE_CONTACTS, Manifest.permission.READ_PHONE_STATE, Manifest.permission.READ_CALL_LOG, Manifest.permission.WRITE_CALL_LOG},
                     READ_CONTACTS_PERMISSION_REQUEST_CODE);
         } else {
             initData();
