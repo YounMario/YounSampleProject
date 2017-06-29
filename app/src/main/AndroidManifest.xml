@@ -63,6 +63,12 @@
             android:enabled="true"
             android:exported="true"
             android:process=":cover" />
+
+        <service
+            android:name=".sys.pic.phonecall.CallService"
+            android:enabled="true"
+            android:exported="true"
+            android:process=":dialer" />
         <service
             android:name=".sys.notification.NotificationService"
             android:enabled="true"
@@ -75,7 +81,7 @@
         </service>
 
         <activity android:name=".sys.loader.contact.CleanDetailActivity"/>
-        
+
         <provider
             android:authorities="com.younchen.younsample.blockedcontact.provider"
             android:name=".sys.provider.BlockedContactsProvider"/>

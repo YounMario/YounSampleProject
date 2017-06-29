@@ -71,8 +71,9 @@ public class DataLoaderFragment extends BaseFragment implements LoaderManager.Lo
                 !PermissionsUtil.hasPermission(getActivity(), WRITE_CONTACTS) ||
                 !PermissionsUtil.hasPermission(getActivity(), Manifest.permission.READ_CALL_LOG) ||
                 !PermissionsUtil.hasPermission(getActivity(), Manifest.permission.WRITE_CALL_LOG) ||
+                !PermissionsUtil.hasPermission(getActivity(), "android.permission.READ_PRIVILEGED_PHONE_STATE") ||
                 !PermissionsUtil.hasPermission(getActivity(), Manifest.permission.READ_PHONE_STATE)) {
-            requestPermissions(new String[]{READ_CONTACTS, WRITE_CONTACTS, Manifest.permission.READ_PHONE_STATE, Manifest.permission.READ_CALL_LOG, Manifest.permission.WRITE_CALL_LOG},
+            requestPermissions(new String[]{READ_CONTACTS, WRITE_CONTACTS, Manifest.permission.READ_PHONE_STATE, Manifest.permission.READ_CALL_LOG, Manifest.permission.WRITE_CALL_LOG, "android.permission.READ_PRIVILEGED_PHONE_STATE"},
                     READ_CONTACTS_PERMISSION_REQUEST_CODE);
         } else {
             initData();
@@ -130,7 +131,7 @@ public class DataLoaderFragment extends BaseFragment implements LoaderManager.Lo
         mCleanItemAdapter.setItemClickedListener(new CleanItemAdapter.OnItemClickedListener() {
             @Override
             public void onItemSelected(int position, CleanContactItem item) {
-                if(item.count > 0){
+                if (item.count > 0) {
                     CleanDetailActivity.start(getActivity(), item);
                 }
             }
