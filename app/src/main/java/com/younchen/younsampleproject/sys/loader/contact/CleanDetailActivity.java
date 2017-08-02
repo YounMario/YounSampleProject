@@ -2,14 +2,18 @@ package com.younchen.younsampleproject.sys.loader.contact;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 
 import com.younchen.younsampleproject.R;
+import com.younchen.younsampleproject.commons.utils.CompatUtils;
 import com.younchen.younsampleproject.sys.loader.contact.adapter.CleanContactAdapter;
 import com.younchen.younsampleproject.sys.loader.contact.bean.CleanContactItem;
 import com.younchen.younsampleproject.sys.loader.contact.bean.ContactItem;
@@ -39,13 +43,26 @@ public class CleanDetailActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setUpView();
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_clean_detail);
         initData();
         initView();
     }
 
+    private void setUpView() {
+        Window window = getWindow();
+        window.getDecorView().setSystemUiVisibility(
+                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+        if (CompatUtils.isLollipopCompatible()) {
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,
+                    WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        }
+    }
+
     private void initView() {
+        View view = findViewById(R.id.activity_clean_detail);
         mCleanBtn = (Button) findViewById(R.id.btn_clean);
         mRecycleView = (RecyclerView) findViewById(R.id.contact_list);
         mRecycleView.setLayoutManager(new LinearLayoutManager(this));
@@ -75,6 +92,8 @@ public class CleanDetailActivity extends AppCompatActivity {
                 EventBus.getDefault().post(new QueryEvent());
             }
         });
+
+        view.setBackgroundColor(Color.GREEN);
     }
 
     private void updateCleanBtn() {
