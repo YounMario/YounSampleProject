@@ -65,7 +65,7 @@ public class DataLoaderFragment extends BaseFragment implements LoaderManager.Lo
         getLoaderManager().initLoader(DEFAULT_LOADER_ID, null, this);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.M)
+
     private void registerPermissionIfNeeded() {
         if (!PermissionsUtil.hasPermission(getActivity(), READ_CONTACTS) ||
                 !PermissionsUtil.hasPermission(getActivity(), WRITE_CONTACTS) ||
