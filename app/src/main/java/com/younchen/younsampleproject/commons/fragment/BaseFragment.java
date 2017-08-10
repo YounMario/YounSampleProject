@@ -3,7 +3,6 @@ package com.younchen.younsampleproject.commons.fragment;
 
 import android.arch.lifecycle.LifecycleFragment;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.KeyEvent;
 import android.view.View;
@@ -16,7 +15,7 @@ import butterknife.ButterKnife;
  * Created by Administrator on 2017/4/11.
  */
 
-public abstract class BaseFragment extends Fragment {
+public abstract class BaseFragment extends LifecycleFragment {
 
     protected View mRootView;
     private boolean mBackPressEnable;

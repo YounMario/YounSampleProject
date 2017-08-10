@@ -26,6 +26,7 @@
         tools:text="Password Setting" />
 
     <TextView
+        android:id="@+id/sub_title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/txt_title"
