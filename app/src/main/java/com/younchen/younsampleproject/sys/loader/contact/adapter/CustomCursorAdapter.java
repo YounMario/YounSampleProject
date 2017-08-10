@@ -1,8 +1,8 @@
 package com.younchen.younsampleproject.sys.loader.contact.adapter;
 
 import android.content.Context;
-import android.content.Loader;
 import android.database.Cursor;
+import android.support.v4.content.Loader;
 import android.widget.CursorAdapter;
 
 /**

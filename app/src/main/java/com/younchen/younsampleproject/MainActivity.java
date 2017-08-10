@@ -1,17 +1,13 @@
 package com.younchen.younsampleproject;
 
-import android.app.Fragment;
 import android.os.Bundle;
-import android.support.v7.widget.RecyclerView;
+import android.support.v4.app.Fragment;
 
 import com.younchen.younsampleproject.commons.activity.BaseActivity;
-import com.younchen.younsampleproject.commons.adapter.FragAdapter;
 import com.younchen.younsampleproject.commons.fragment.LauncherFragment;
 
 public class MainActivity extends BaseActivity {
 
-    private RecyclerView mRecycleView;
-    private FragAdapter mAdapter;
     private LauncherFragment launcherFragment;
 
     @Override

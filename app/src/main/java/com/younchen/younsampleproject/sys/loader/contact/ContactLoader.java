@@ -2,13 +2,13 @@ package com.younchen.younsampleproject.sys.loader.contact;
 
 import android.content.ContentResolver;
 import android.content.Context;
-import android.content.CursorLoader;
 import android.database.Cursor;
 import android.database.MergeCursor;
 import android.net.Uri;
 import android.os.CancellationSignal;
 import android.os.OperationCanceledException;
 import android.provider.ContactsContract;
+import android.support.v4.content.CursorLoader;
 
 
 import java.io.FileDescriptor;

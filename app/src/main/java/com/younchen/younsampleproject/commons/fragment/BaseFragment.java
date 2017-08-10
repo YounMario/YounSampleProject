@@ -1,9 +1,10 @@
 package com.younchen.younsampleproject.commons.fragment;
 
 
-import android.app.Fragment;
-import android.app.FragmentTransaction;
+import android.arch.lifecycle.LifecycleFragment;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.KeyEvent;
 import android.view.View;
 
@@ -23,7 +24,7 @@ public abstract class BaseFragment extends Fragment {
 
     public void show(BaseActivity activity) {
         long currentTime = System.currentTimeMillis();
-        FragmentTransaction transaction = activity.getFragmentManager().beginTransaction();
+        FragmentTransaction transaction = activity.getSupportFragmentManager().beginTransaction();
         transaction.replace(activity.getFragmentLayoutContainerId(), this);
         transaction.addToBackStack(BaseFragment.class.getSimpleName() + String.valueOf(currentTime));
         transaction.commit();
