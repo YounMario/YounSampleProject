@@ -8,4 +8,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
+    <com.younchen.younsampleproject.commons.widget.LineTextView
+        android:id="@+id/line_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
 </LinearLayout>

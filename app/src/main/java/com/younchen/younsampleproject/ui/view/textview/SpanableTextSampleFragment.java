@@ -15,6 +15,9 @@ import android.widget.TextView;
 import com.younchen.younsampleproject.R;
 import com.younchen.younsampleproject.commons.fragment.BaseFragment;
 import com.younchen.younsampleproject.commons.utils.DimenUtils;
+import com.younchen.younsampleproject.commons.widget.LineTextView;
+
+import java.util.ArrayList;
 
 import butterknife.BindBitmap;
 import butterknife.BindView;
@@ -27,6 +30,8 @@ public class SpanableTextSampleFragment extends BaseFragment {
 
     @BindView(R.id.txt_content)
     TextView textView;
+    @BindView(R.id.line_text)
+    LineTextView mLineText;
 
     @BindBitmap(R.drawable.ic_star_green)
     Bitmap mStarImage;
@@ -48,6 +53,11 @@ public class SpanableTextSampleFragment extends BaseFragment {
         SpannableString spannableString = new SpannableString("*");
         replaceTextAsStar(spannableString);
         textView.setText(spannableString);
+        ArrayList<String> strings = new ArrayList<>();
+        strings.add("abcdddd");
+        strings.add("bbbbbbb");
+        strings.add("ccccc");
+        mLineText.setStringList(strings);
     }
 
     private void replaceTextAsStar(SpannableString spannableString) {

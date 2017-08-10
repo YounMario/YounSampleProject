@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 
 import com.younchen.younsampleproject.R;
 import com.younchen.younsampleproject.commons.fragment.BaseFragment;
+import com.younchen.younsampleproject.ui.view.style.drawable.ClipDrawable;
 
 /**
  * Created by yinlongquan on 2017/7/21.
@@ -26,7 +27,7 @@ public class StyleViewFragment extends BaseFragment{
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        Drawable mDrawable = getActivity().getResources().getDrawable(R.drawable.main_back);
+        Drawable mDrawable = getActivity().getResources().getDrawable(R.drawable.background);
         ClipDrawable clipDrawable = new ClipDrawable(mDrawable);
         mRootView.setBackgroundDrawable(clipDrawable);
     }
