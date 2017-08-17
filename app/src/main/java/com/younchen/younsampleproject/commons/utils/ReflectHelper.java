@@ -12,9 +12,9 @@ public class ReflectHelper {
     /**
      * 通过构造器取得实例
      *
-     * @param className     访问类名
-     * @param intArgsClass  参数类型
-     * @param intArgs       参数值
+     * @param className    访问类名
+     * @param intArgsClass 参数类型
+     * @param intArgs      参数值
      * @return Object
      */
     public static Object invokeConstructor(ClassLoader loader, String className, Class[] intArgsClass, Object[] intArgs) {
@@ -38,14 +38,14 @@ public class ReflectHelper {
 
     /**
      * 通过构造器取得实例
-     * 
-     * @param className     访问类名
-     * @param intArgsClass  参数类型
-     * @param intArgs       参数值
+     *
+     * @param className    访问类名
+     * @param intArgsClass 参数类型
+     * @param intArgs      参数值
      * @return Object
      */
     public static Object invokeConstructor(String className, Class[] intArgsClass,
-            Object[] intArgs) {
+                                           Object[] intArgs) {
         Object obj = null;
         try {
             Class<?> classType = Class.forName(className);
@@ -62,15 +62,15 @@ public class ReflectHelper {
 
     /**
      * 修改成员变量的值
-     * 
-     * @param object        访问对象
-     * @param filedName     成员变量名
-     * @param filedValue    修改值
+     *
+     * @param object     访问对象
+     * @param filedName  成员变量名
+     * @param filedValue 修改值
      */
     public static void modifyFieldValue(Object object, String filedName,
-            String filedValue) {
+                                        String filedValue) {
         Class classType = object.getClass();
-        Field field ;
+        Field field;
         try {
             field = classType.getDeclaredField(filedName);
             field.setAccessible(true);
@@ -82,48 +82,36 @@ public class ReflectHelper {
         }
     }
 
-    /**
-     * 访问类成员变量
-     * 
-     * @param object        访问对象
-     * @param member        成员变量名
-     * @return Object       成员变量值
-     */
-    public static Object getFieldValue(Object object, String member) {
-        Class classType = object.getClass();
-        return getFieldValue(classType, member);
-    }
 
-    public static Object getFieldValue(Class clazz, String member) {
+    public static Object getFieldValue(Object target, String member) {
         Field field;
-        while (clazz != Object.class) {
+        Class classType = target.getClass();
+        while (classType != Object.class) {
             try {
-                field = clazz.getDeclaredField(member);
+                field = classType.getDeclaredField(member);
                 field.setAccessible(true);
-                return field.get(null);
+                return field.get(target);
             } catch (Exception e) {
-                clazz = clazz.getSuperclass();
+                classType = classType.getSuperclass();
             }
         }
         return null;
     }
 
 
-
     /**
      * 调用类方法，包括私有
-     * 
-     * @param object        访问对象
-     * @param methodName    成员变量名
-     * @param type          参数类型
-     * @param value         参数值
+     *
+     * @param object     访问对象
+     * @param methodName 成员变量名
+     * @param type       参数类型
+     * @param value      参数值
      */
     public static Object invokeMethod(Object object, String methodName,
-            Class[] type, Object[] value) {
-        Class<?> classType = object.getClass();
+                                      Class[] type, Object[] value) {
         Object obj = null;
         try {
-            Method method = classType.getDeclaredMethod(methodName, type);
+            Method method = getDeclaredMethod(object, methodName, type);
             method.setAccessible(true);
             obj = method.invoke(object, value);
         } catch (NoSuchMethodException ex) {
@@ -134,14 +122,31 @@ public class ReflectHelper {
         return obj;
     }
 
+    public static Method getDeclaredMethod(Object target, String name, Class[] type) throws NoSuchMethodException {
+        Class<?> clazz = target.getClass();
+        Method method = null;
+        while (clazz != null){
+            try{
+                method = clazz.getDeclaredMethod(name, type);
+            }catch (Exception ex){
+
+            }
+            if(method != null){
+                return method;
+            }
+            clazz = clazz.getSuperclass();
+        }
+        throw new NoSuchMethodException();
+    }
+
 
     /**
      * 调用类方法，包括私有
      *
-     * @param object        访问对象
-     * @param methodName    成员变量名
-     * @param type          参数类型
-     * @param value         参数值
+     * @param object     访问对象
+     * @param methodName 成员变量名
+     * @param type       参数类型
+     * @param value      参数值
      */
     public static Object invokeMethodStrictly(Object object, String methodName, Class[] type, Object[] value) {
         if (object == null || TextUtils.isEmpty(methodName)) {

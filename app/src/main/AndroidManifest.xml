@@ -17,14 +17,12 @@
     <uses-permission android:name="android.permission.MANAGE_ACCOUNTS" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS_PRIVILEGED" />
-
     <uses-permission android:name="android.permission.READ_CALL_LOG" />
     <uses-permission android:name="android.permission.WRITE_CALL_LOG" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
         android:name=".App"
@@ -67,7 +65,6 @@
             android:enabled="true"
             android:exported="true"
             android:process=":cover" />
-
         <service
             android:name=".sys.pic.phonecall.CallService"
             android:enabled="true"
@@ -84,11 +81,13 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".sys.loader.contact.CleanDetailActivity"/>
+        <activity android:name=".sys.loader.contact.CleanDetailActivity" />
 
         <provider
-            android:authorities="com.younchen.younsample.blockedcontact.provider"
-            android:name=".sys.provider.BlockedContactsProvider"/>
+            android:name=".sys.provider.BlockedContactsProvider"
+            android:authorities="com.younchen.younsample.blockedcontact.provider" />
+
+        <activity android:name=".NotFound404Activity"></activity>
     </application>
 
 </manifest>
