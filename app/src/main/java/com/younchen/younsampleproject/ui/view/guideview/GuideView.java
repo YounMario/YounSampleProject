@@ -41,6 +41,8 @@ public class GuideView extends RelativeLayout {
     private WindowManager mWindowManager;
     private TextView mCertainBtn;
 
+    private Runnable mAnimPostRunnable;
+
 
     public GuideView(Context context) {
         this(context, null);
@@ -55,6 +57,7 @@ public class GuideView extends RelativeLayout {
         mContext = context;
         init();
     }
+
 
     private void init() {
         LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -76,6 +79,22 @@ public class GuideView extends RelativeLayout {
         });
     }
 
+    @Override
+    protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        super.onLayout(changed, l, t, r, b);
+    }
+
+    @Override
+    protected void onFinishInflate() {
+
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        super.onAttachedToWindow();
+    }
+
+
     public void show() {
         mWindowManager = (WindowManager) getContext().getSystemService(
                 Context.WINDOW_SERVICE);
@@ -90,14 +109,21 @@ public class GuideView extends RelativeLayout {
                 | WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED
                 | WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD;
         mWindowManager.addView(this, layoutParams);
-        startAnimation();
+        mAnimPostRunnable = new Runnable() {
+            @Override
+            public void run() {
+                startAnimation();
+            }
+        };
+        postDelayed(mAnimPostRunnable, 200);
     }
 
     public void hide() {
         stopAnimation();
-        if(this.isAttachedToWindow()){
+        if (this.isAttachedToWindow()) {
             mWindowManager.removeView(this);
         }
+        removeCallbacks(mAnimPostRunnable);
     }
 
     public void startAnimation() {
@@ -123,7 +149,6 @@ public class GuideView extends RelativeLayout {
         //step 2. move finger view to ripple view
         Rect launcherIconViewArea = new Rect();
         mLogImageView.getGlobalVisibleRect(launcherIconViewArea);
-
         int fingerMoveTarget1Left = launcherIconViewArea.left + DimenUtils.dp2px(8);
         int fingerMoveTarget1Top = launcherIconViewArea.top + launcherIconViewArea.width() / 2;
 
@@ -174,7 +199,7 @@ public class GuideView extends RelativeLayout {
             @Override
             public void onAnimationEnd(Animator animation) {
                 super.onAnimationEnd(animation);
-                mAlwaysBtn.animateRipple(mAlwaysBtn.getWidth()/2, mAlwaysBtn.getHeight()/2);
+                mAlwaysBtn.animateRipple(mAlwaysBtn.getWidth() / 2, mAlwaysBtn.getHeight() / 2);
             }
         });
         mAnimatorSet.start();
