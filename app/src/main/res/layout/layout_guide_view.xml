@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#CC000000"
+    android:orientation="vertical">
+
+
+    <RelativeLayout
+        android:id="@+id/dialog_choose_default"
+        android:layout_width="match_parent"
+        android:layout_height="257dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="153dp"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:id="@+id/dialog_title"
+            android:layout_width="match_parent"
+            android:layout_height="49dp"
+            android:background="#4480F7">
+
+            <ImageView
+                android:id="@+id/icon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="16dp"
+                android:src="@drawable/pic_logo_small" />
+
+            <TextView
+                android:id="@+id/txt_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="12dp"
+                android:layout_toRightOf="@+id/icon"
+                android:text="Set CM Launcher as Default"
+                android:textColor="@color/color_white"
+                android:textSize="15dp" />
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:id="@+id/content_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/dialog_title"
+            android:background="@color/color_white"
+            android:orientation="horizontal"
+            android:paddingTop="25dp">
+
+            <RelativeLayout
+                android:id="@+id/img_view_container"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <RelativeLayout
+                    android:id="@+id/launcher_view_container"
+                    android:layout_width="98dp"
+                    android:layout_height="96dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true">
+
+                    <RelativeLayout
+                        android:id="@+id/logo_img_container"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="12dp">
+
+                        <ImageView
+                            android:id="@+id/logo_img"
+                            android:layout_width="49dp"
+                            android:layout_height="49dp"
+                            android:src="@drawable/pic_launcher_logo" />
+
+                        <ImageView
+                            android:id="@+id/ripple_img_view"
+                            android:layout_width="30dp"
+                            android:layout_height="30dp"
+                            android:layout_centerHorizontal="true"
+                            android:layout_marginTop="12dp"
+                            android:src="@drawable/pic_clicked_ripple"
+                            android:visibility="gone" />
+                    </RelativeLayout>
+
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@+id/logo_img_container"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginBottom="8dp"
+                        android:layout_marginTop="11dp"
+                        android:text="CM launcher"
+                        android:textSize="12dp" />
+
+
+                </RelativeLayout>
+
+            </RelativeLayout>
+
+            <FrameLayout
+                android:layout_width="0dp"
+                android:layout_height="96dp"
+                android:layout_weight="2">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/pic_other_apps" />
+
+            </FrameLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/content_container"
+            android:background="@color/color_white"
+            android:paddingBottom="23dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:paddingTop="30dp">
+
+            <com.younchen.younsampleproject.commons.widget.RippleView
+                android:id="@+id/btn_always"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="36dp"
+                    android:layout_marginRight="8dp"
+                    android:background="#EEEEEE"
+                    android:gravity="center"
+                    android:text="ALEAYS" />
+
+            </com.younchen.younsampleproject.commons.widget.RippleView>
+
+
+            <TextView
+                android:id="@+id/btn_just_onces"
+                android:layout_width="0dp"
+                android:layout_height="36dp"
+                android:layout_marginLeft="8dp"
+                android:layout_weight="1"
+                android:background="#EEEEEE"
+                android:gravity="center"
+                android:text="JUST ONCES" />
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/btn_got_it"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_below="@+id/dialog_choose_default"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="50dp"
+        android:background="@drawable/guide_btn_back_ground"
+        android:gravity="center"
+        android:text="GOT IT"
+        android:textColor="@color/color_white"
+        android:textSize="16dp" />
+
+    <ImageView
+        android:id="@+id/hand_img_view"
+        android:layout_width="58dp"
+        android:layout_height="85dp"
+        android:src="@drawable/pic_hand"
+        android:visibility="invisible"
+        android:layout_alignBottom="@+id/dialog_choose_default"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="50dp" />
+</RelativeLayout>

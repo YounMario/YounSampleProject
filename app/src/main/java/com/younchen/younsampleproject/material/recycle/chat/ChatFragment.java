@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 
 import com.younchen.younsampleproject.R;
 import com.younchen.younsampleproject.commons.fragment.BaseFragment;
+import com.younchen.younsampleproject.commons.list.ListAttach;
+import com.younchen.younsampleproject.commons.list.ListCallBack;
 import com.younchen.younsampleproject.material.Constants;
 import com.younchen.younsampleproject.material.adapter.ChatListAdapter;
 import com.younchen.younsampleproject.material.bean.Contact;
@@ -23,9 +25,13 @@ import java.util.List;
 public class ChatFragment extends BaseFragment {
 
 
+
     private ChatListAdapter mChatListAdapter;
     private List<Contact> mContactList;
     private RecyclerView mRecycleView;
+
+    private boolean isLoading;
+    private ListAttach mListAttacher;
 
     @Nullable
     @Override
@@ -41,6 +47,18 @@ public class ChatFragment extends BaseFragment {
 
     private void init() {
         mRecycleView = (RecyclerView) mRootView.findViewById(R.id.contact_list);
+        mListAttacher = ListAttach.create(mRecycleView, new ListCallBack() {
+
+            @Override
+            public boolean isLoading() {
+                return isLoading;
+            }
+
+            @Override
+            public void onLoadMore() {
+                isLoading = true;
+            }
+        });
         mContactList = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
             Contact contact = new Contact();
@@ -52,6 +70,10 @@ public class ChatFragment extends BaseFragment {
         mChatListAdapter = new ChatListAdapter(getActivity());
         mChatListAdapter.setData(mContactList);
         mRecycleView.setAdapter(mChatListAdapter);
+    }
+
+    private void loadMoreData() {
+
     }
 
     @Override

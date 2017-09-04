@@ -12,4 +12,6 @@
     <!--item color-->
     <color name="item_color_front">#FFFFFF</color>
     <color name="item_color_back">#0D000000</color>
+
+    <color name="rippelColor">#4E89FF</color>
 </resources>

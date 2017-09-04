@@ -1,9 +1,6 @@
 package com.younchen.younsampleproject.ui.view.textview;
 
-import android.content.ComponentName;
-import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.Spannable;
@@ -13,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.younchen.younsampleproject.R;
 import com.younchen.younsampleproject.commons.fragment.BaseFragment;
@@ -21,6 +17,7 @@ import com.younchen.younsampleproject.commons.log.YLog;
 import com.younchen.younsampleproject.commons.utils.DimenUtils;
 import com.younchen.younsampleproject.commons.utils.ReflectHelper;
 import com.younchen.younsampleproject.commons.widget.LineTextView;
+import com.younchen.younsampleproject.ui.view.guideview.GuideView;
 
 import java.util.ArrayList;
 
@@ -41,6 +38,8 @@ public class SpanableTextSampleFragment extends BaseFragment {
     @BindBitmap(R.drawable.ic_star_green)
     Bitmap mStarImage;
     private final int STAR_IMAGE_SIZE = DimenUtils.dp2px(20);
+
+    private GuideView mGuideView;
 
     @Nullable
     @Override
@@ -63,16 +62,19 @@ public class SpanableTextSampleFragment extends BaseFragment {
         strings.add("bbbbbbb");
         strings.add("ccccc");
         mLineText.setStringList(strings);
+        mGuideView = new GuideView(getContext());
 
         textView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent();
-                intent.setComponent(new ComponentName("com.android.settings", "com.android.settings.Settings"));
-                startActivity(intent);
+//                Intent intent = new Intent();
+//                intent.setComponent(new ComponentName("com.android.settings", "com.android.settings.Settings"));
+//                startActivity(intent);
+                mGuideView.show();
             }
         });
         wrapperOnClickListenerForView(textView);
+
     }
 
     private void wrapperOnClickListenerForView(View view) {
@@ -113,6 +115,14 @@ public class SpanableTextSampleFragment extends BaseFragment {
                 YLog.i("younchen", "it's wrapper clickListener clicked");
                 mInnerOnclickListener.onClick(v);
             }
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (mGuideView != null) {
+            mGuideView.hide();
         }
     }
 }

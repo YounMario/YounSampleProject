@@ -87,7 +87,8 @@
             android:name=".sys.provider.BlockedContactsProvider"
             android:authorities="com.younchen.younsample.blockedcontact.provider" />
 
-        <activity android:name=".NotFound404Activity"></activity>
+        <activity android:name=".NotFound404Activity" />
+        <activity android:name=".ui.view.textview.SetDefaultDialogActivity"></activity>
     </application>
 
 </manifest>
