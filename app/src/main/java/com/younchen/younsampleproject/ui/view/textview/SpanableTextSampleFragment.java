@@ -11,6 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.younchen.younsampleproject.NewSettingDefaultGuideActivity;
+import com.younchen.younsampleproject.NotFound404Activity;
 import com.younchen.younsampleproject.R;
 import com.younchen.younsampleproject.commons.fragment.BaseFragment;
 import com.younchen.younsampleproject.commons.log.YLog;
@@ -70,7 +72,9 @@ public class SpanableTextSampleFragment extends BaseFragment {
 //                Intent intent = new Intent();
 //                intent.setComponent(new ComponentName("com.android.settings", "com.android.settings.Settings"));
 //                startActivity(intent);
-                mGuideView.show();
+                //mGuideView.show();
+                NotFound404Activity.start(getActivity());
+                NewSettingDefaultGuideActivity.start(getActivity());
             }
         });
         wrapperOnClickListenerForView(textView);

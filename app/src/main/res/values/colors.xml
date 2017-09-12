@@ -14,4 +14,5 @@
     <color name="item_color_back">#0D000000</color>
 
     <color name="rippelColor">#4E89FF</color>
+    <color name="transparent">#00000000</color>
 </resources>
