@@ -63,18 +63,18 @@
                     android:id="@+id/launcher_view_container"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:minWidth="98dp"
-                    android:minHeight="96dp"
                     android:layout_alignParentRight="true"
-                    android:layout_centerVertical="true">
+                    android:layout_centerVertical="true"
+                    android:minHeight="96dp"
+                    android:minWidth="98dp">
 
                     <ImageView
-                        android:layout_centerInParent="true"
                         android:id="@+id/img_select_view"
                         android:layout_width="88dp"
                         android:layout_height="88dp"
+                        android:layout_centerInParent="true"
                         android:background="@drawable/pic_selected"
-                        android:visibility="visible"/>
+                        android:visibility="visible" />
 
                     <RelativeLayout
                         android:id="@+id/logo_img_container"
@@ -118,8 +118,8 @@
             <FrameLayout
                 android:layout_width="0dp"
                 android:layout_height="96dp"
-                android:paddingRight="24dp"
-                android:layout_weight="2">
+                android:layout_weight="2"
+                android:paddingRight="24dp">
 
                 <ImageView
                     android:layout_width="match_parent"
@@ -139,21 +139,29 @@
             android:paddingRight="16dp"
             android:paddingTop="30dp">
 
-            <com.younchen.younsampleproject.commons.widget.RippleView
-                android:id="@+id/btn_always"
+            <RelativeLayout
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="36dp"
+                android:layout_marginRight="8dp"
                 android:layout_weight="1">
 
-                <TextView
+                <com.younchen.younsampleproject.commons.widget.RippleView
+                    android:id="@+id/btn_always"
                     android:layout_width="match_parent"
-                    android:layout_height="36dp"
-                    android:layout_marginRight="8dp"
+                    android:layout_height="match_parent"
                     android:background="#EEEEEE"
                     android:gravity="center"
-                    android:text="ALEAYS" />
+                    />
 
-            </com.younchen.younsampleproject.commons.widget.RippleView>
+                <TextView
+                    android:id="@+id/txt_always"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="ALEAYS"
+                    android:textColor="@color/gray" />
+
+            </RelativeLayout>
 
 
             <TextView

@@ -25,6 +25,7 @@
 package com.younchen.younsampleproject.commons.widget;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -35,14 +36,13 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.os.Build;
 import android.os.Handler;
-import android.support.annotation.ColorRes;
 import android.util.AttributeSet;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
 import android.widget.AdapterView;
-import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.younchen.younsampleproject.R;
 
@@ -55,7 +55,7 @@ import com.younchen.younsampleproject.R;
  * @author Chutaux Robin
  * @version 2015.0512
  */
-public class RippleView extends RelativeLayout {
+public class RippleView extends TextView {
 
     private int WIDTH;
     private int HEIGHT;
@@ -81,6 +81,7 @@ public class RippleView extends RelativeLayout {
     private int rippleColor;
     private int ripplePadding;
     private GestureDetector gestureDetector;
+    private ColorStateList mTextColor;
     private final Runnable runnable = new Runnable() {
         @Override
         public void run() {
@@ -132,6 +133,7 @@ public class RippleView extends RelativeLayout {
         paint.setStyle(Paint.Style.FILL);
         paint.setColor(rippleColor);
         paint.setAlpha(rippleAlpha);
+        mTextColor = getTextColors();
         this.setWillNotDraw(false);
 
         gestureDetector = new GestureDetector(context, new GestureDetector.SimpleOnGestureListener() {
@@ -198,15 +200,14 @@ public class RippleView extends RelativeLayout {
 
             paint.setColor(rippleColor);
 
-            if (rippleType == 1) {
-                if ((((float) timer * frameRate) / rippleDuration) > 0.6f)
-                    paint.setAlpha((int) (rippleAlpha - ((rippleAlpha) * (((float) timerEmpty * frameRate) / (durationEmpty)))));
-                else
-                    paint.setAlpha(rippleAlpha);
-            }
-            else
-                paint.setAlpha((int) (rippleAlpha - ((rippleAlpha) * (((float) timer * frameRate) / rippleDuration))));
-
+//            if (rippleType == 1) {
+//                if ((((float) timer * frameRate) / rippleDuration) > 0.6f)
+//                    paint.setAlpha((int) (rippleAlpha - ((rippleAlpha) * (((float) timerEmpty * frameRate) / (durationEmpty)))));
+//                else
+//                    paint.setAlpha(rippleAlpha);
+//            }
+//            else
+//                paint.setAlpha((int) (rippleAlpha - ((rippleAlpha) * (((float) timer * frameRate) / rippleDuration))));
             timer++;
         }
     }
@@ -240,6 +241,9 @@ public class RippleView extends RelativeLayout {
      */
     public void animateRipple(final float x, final float y) {
         createAnimation(x, y);
+        if (onCompletionListener != null) {
+            onCompletionListener.onStart();
+        }
     }
 
     /**
@@ -286,11 +290,6 @@ public class RippleView extends RelativeLayout {
         return super.onTouchEvent(event);
     }
 
-    @Override
-    public boolean onInterceptTouchEvent(MotionEvent event) {
-        this.onTouchEvent(event);
-        return super.onInterceptTouchEvent(event);
-    }
 
     /**
      * Send a click event if parent view is a Listview instance
@@ -328,12 +327,6 @@ public class RippleView extends RelativeLayout {
         return output;
     }
 
-    /**
-     * Set Ripple color, default is #FFFFFF
-     *
-     * @param rippleColor New color resource
-     */
-    @ColorRes
     public void setRippleColor(int rippleColor) {
         this.rippleColor = getResources().getColor(rippleColor);
     }
@@ -486,6 +479,7 @@ public class RippleView extends RelativeLayout {
      */
     public interface OnRippleCompleteListener {
         void onComplete(RippleView rippleView);
+        void onStart();
     }
 
     public enum RippleType {

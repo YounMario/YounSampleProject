@@ -43,6 +43,7 @@ public class SpanableTextSampleFragment extends BaseFragment {
 
     private GuideView mGuideView;
 
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

@@ -7,6 +7,8 @@ import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Handler;
@@ -44,6 +46,9 @@ public class NewSettingDefaultGuideActivity extends Activity {
 
     private int countDown = ANIM_REPEAT_TIMES;
     private View mImgSelectView;
+    private RippleView mReppleView;
+    private TextView mAlwaysText;
+    private ColorStateList mTextColor;
 
 
     public static void start(Context context) {
@@ -76,10 +81,26 @@ public class NewSettingDefaultGuideActivity extends Activity {
         mAlwaysBtn = (RippleView) findViewById(R.id.btn_always);
         mCertainBtn = (TextView) findViewById(R.id.btn_got_it);
         mImgSelectView = findViewById(R.id.img_select_view);
+        mReppleView = (RippleView) findViewById(R.id.btn_always);
+        mAlwaysText = (TextView) findViewById(R.id.txt_always);
+        mTextColor =  mAlwaysText.getTextColors();
         mCertainBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
+            }
+        });
+        mReppleView.setRippleType(RippleView.RippleType.RECTANGLE);
+        mReppleView.setRippleAlpha(255);
+        mReppleView.setOnRippleCompleteListener(new RippleView.OnRippleCompleteListener() {
+            @Override
+            public void onComplete(RippleView rippleView) {
+                mAlwaysText.setTextColor(mTextColor);
+            }
+
+            @Override
+            public void onStart() {
+                mAlwaysText.setTextColor(Color.WHITE);
             }
         });
     }
@@ -101,9 +122,10 @@ public class NewSettingDefaultGuideActivity extends Activity {
 
     public void startAnimation(final int repeatTime) {
         resetAnimationState();
+        AnimatorSet showAndMove = new AnimatorSet();
         //step 1. show finger view
         ValueAnimator fingerViewShowAnimation = ValueAnimator.ofFloat(0.f, 1.f);
-        fingerViewShowAnimation.setDuration(400);
+        fingerViewShowAnimation.setDuration(350);
         fingerViewShowAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator animation) {
@@ -133,6 +155,7 @@ public class NewSettingDefaultGuideActivity extends Activity {
 
 
         ValueAnimator moveHandViewAnimator = fingerMoveAnimation(mFingerView, new Translation(0, 0), offsetX, offsetY);
+        showAndMove.playTogether(fingerViewShowAnimation, moveHandViewAnimator);
 
         //step 3. show click animation
         AnimatorSet clickAnimationSet = new AnimatorSet();
@@ -160,7 +183,7 @@ public class NewSettingDefaultGuideActivity extends Activity {
         });
 
         ValueAnimator backGroundAnimator = ValueAnimator.ofFloat(1);
-        backGroundAnimator.setDuration(500);
+        backGroundAnimator.setDuration(350);
         backGroundAnimator.setInterpolator(new CycleInterpolator(0.5f));
         backGroundAnimator.addListener(new AnimatorListenerAdapter() {
             @Override
@@ -189,7 +212,7 @@ public class NewSettingDefaultGuideActivity extends Activity {
         ValueAnimator moveHandViewAnimator2 = fingerMoveAnimation(mFingerView, new Translation(offsetX, offsetY), offsetX2, offsetY2);
 
         mAnimatorSet = new AnimatorSet();
-        mAnimatorSet.playSequentially(fingerViewShowAnimation, moveHandViewAnimator, clickAnimationSet, moveHandViewAnimator2);
+        mAnimatorSet.playSequentially(showAndMove, clickAnimationSet, moveHandViewAnimator2);
         mAnimatorSet.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationEnd(Animator animation) {
