@@ -3,6 +3,11 @@ package com.younchen.younsampleproject.http.okhttp.download;
 import android.content.Context;
 
 import com.younchen.younsampleproject.commons.utils.FileUtils;
+import com.younchen.younsampleproject.commons.utils.MD5Utils;
+import com.younchen.younsampleproject.commons.utils.StringUtils;
+import com.younchen.younsampleproject.http.okhttp.CallBack;
+import com.younchen.younsampleproject.http.okhttp.ProgressResponseBody;
+import com.younchen.younsampleproject.http.okhttp.bean.DownLoadInfo;
 
 import java.io.File;
 
@@ -16,16 +21,13 @@ public class DownloadPresenter {
     public static final int NORMAL = 0;
     public static final int DOWNLOADING = 1;
     public static final int PAUSE = 2;
-    private Context mContext;
     private DownLoadView mDownLoadView;
 
     private File mSavePath = FileUtils.getSdCardFileOrDir("youn_sample");
-    private String mCurrentDownloadUrl;
 
     private int mState = NORMAL;
 
     public DownloadPresenter(Context context, DownLoadView downloadView) {
-        mContext = context;
         mDownLoadView = downloadView;
         if (!mSavePath.exists()) {
             if (!mSavePath.mkdir()) {
@@ -35,19 +37,40 @@ public class DownloadPresenter {
     }
 
     public void startDownload(String mDownloadUrl) {
-        mCurrentDownloadUrl = mDownloadUrl;
         if (getState() == DownloadPresenter.DOWNLOADING) {
             pauseDownload();
         } else if (getState() == DownloadPresenter.PAUSE) {
             resumeDownload();
         } else if (getState() == DownloadPresenter.NORMAL) {
-            download();
+            download(mDownloadUrl);
         }
     }
 
-    private void download() {
+    private void download(String downLoadUrl) {
         setStatus(DOWNLOADING);
-        mDownLoadView.downloadStart();
+        DownLoadInfo info = new DownLoadInfo();
+        info.setUrl(downLoadUrl);
+        DownloadModel.getInstance().download(info, String.valueOf(downLoadUrl.hashCode()), new CallBack() {
+            @Override
+            public void onStart(long length) {
+                mDownLoadView.downloadStart();
+            }
+
+            @Override
+            public void onProgress(long current, long total, int percent) {
+                mDownLoadView.progress(percent);
+            }
+
+            @Override
+            public void onFinish() {
+                mDownLoadView.downloadFinish();
+            }
+
+            @Override
+            public void onFail(Throwable throwable) {
+                mDownLoadView.downloadFail(throwable);
+            }
+        });
     }
 
     public void cancelDownload() {

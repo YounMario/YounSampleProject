@@ -17,4 +17,6 @@ public interface DownLoadView {
     void downloadResume();
 
     void downloadCanceled();
+
+    void downloadFail(Throwable throwable);
 }
