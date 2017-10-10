@@ -1,20 +1,13 @@
-package com.younchen.younsampleproject.okhttp;
+package com.younchen.younsampleproject.com.square.io.okhttp;
 
 import com.younchen.younsampleproject.http.okhttp.ProgressResponseBody;
 
 import java.io.IOException;
 
 import okhttp3.Interceptor;
-import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import okhttp3.ResponseBody;
-import okio.Buffer;
-import okio.BufferedSource;
-import okio.ForwardingSource;
-import okio.Okio;
-import okio.Source;
 
 /**
  * Created by yinlongquan on 2017/10/10.

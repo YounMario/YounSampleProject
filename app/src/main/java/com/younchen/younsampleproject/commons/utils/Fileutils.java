@@ -9,6 +9,7 @@ import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -16,6 +17,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.RandomAccessFile;
 import java.math.BigDecimal;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
@@ -89,6 +91,7 @@ public class FileUtils {
         }
         return true;
     }
+
 
     /**
      * 读取数据
@@ -659,5 +662,34 @@ public class FileUtils {
                 }
         }
         return result;
+    }
+
+    /**
+     * @param outputPath
+     * @param bytes
+     * @param lastDownloadOffset
+     * @param length
+     */
+    public static void randomWrite(String outputPath, byte[] bytes, int lastDownloadOffset, int length) {
+        RandomAccessFile rFile = null;
+        try {
+            File file = new File(outputPath);
+            rFile = new RandomAccessFile(file, "rw");
+            rFile.write(bytes, lastDownloadOffset, length);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        } finally {
+            safeClose(rFile);
+        }
+    }
+
+    private static void safeClose(Closeable closeable) {
+        if (closeable != null) {
+            try {
+                closeable.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

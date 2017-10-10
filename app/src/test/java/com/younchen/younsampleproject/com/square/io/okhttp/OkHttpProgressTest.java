@@ -1,4 +1,4 @@
-package com.younchen.younsampleproject.okhttp;
+package com.younchen.younsampleproject.com.square.io.okhttp;
 
 import org.junit.Test;
 

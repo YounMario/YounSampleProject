@@ -23,24 +23,17 @@ public class DownloadPresenter {
     public static final int PAUSE = 2;
     private DownLoadView mDownLoadView;
 
-    private File mSavePath = FileUtils.getSdCardFileOrDir("youn_sample");
-
     private int mState = NORMAL;
 
     public DownloadPresenter(Context context, DownLoadView downloadView) {
         mDownLoadView = downloadView;
-        if (!mSavePath.exists()) {
-            if (!mSavePath.mkdir()) {
-                throw new RuntimeException("create save path error");
-            }
-        }
     }
 
     public void startDownload(String mDownloadUrl) {
         if (getState() == DownloadPresenter.DOWNLOADING) {
-            pauseDownload();
+            pauseDownload(mDownloadUrl);
         } else if (getState() == DownloadPresenter.PAUSE) {
-            resumeDownload();
+            resumeDownload(mDownloadUrl);
         } else if (getState() == DownloadPresenter.NORMAL) {
             download(mDownloadUrl);
         }
@@ -48,9 +41,7 @@ public class DownloadPresenter {
 
     private void download(String downLoadUrl) {
         setStatus(DOWNLOADING);
-        DownLoadInfo info = new DownLoadInfo();
-        info.setUrl(downLoadUrl);
-        DownloadModel.getInstance().download(info, String.valueOf(downLoadUrl.hashCode()), new CallBack() {
+        DownloadModel.getInstance().download(downLoadUrl, new CallBack() {
             @Override
             public void onStart(long length) {
                 mDownLoadView.downloadStart();
@@ -79,14 +70,16 @@ public class DownloadPresenter {
     }
 
 
-    private void pauseDownload() {
+    private void pauseDownload(String url) {
         setStatus(PAUSE);
         mDownLoadView.downloadPause();
+        DownloadModel.getInstance().pause(String.valueOf(url.hashCode()));
     }
 
-    private void resumeDownload() {
+    private void resumeDownload(String url) {
         setStatus(DOWNLOADING);
         mDownLoadView.downloadResume();
+        download(url);
     }
 
     private int getState() {
