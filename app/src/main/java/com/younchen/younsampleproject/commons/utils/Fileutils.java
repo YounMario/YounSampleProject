@@ -56,7 +56,7 @@ public class FileUtils {
      * @param path
      * @return
      */
-    public static boolean writeFile(byte[] data, String path) throws Exception {
+    public static boolean writeFile(byte[] data, String path) throws IOException {
         ByteArrayInputStream bai = new ByteArrayInputStream(data);
         FileOutputStream fOutput = null;
         try {
@@ -683,7 +683,7 @@ public class FileUtils {
         }
     }
 
-    private static void safeClose(Closeable closeable) {
+    public static void safeClose(Closeable closeable) {
         if (closeable != null) {
             try {
                 closeable.close();
@@ -691,5 +691,32 @@ public class FileUtils {
                 e.printStackTrace();
             }
         }
+    }
+
+    public static boolean rename(String tempFile, String outPutFile) {
+        File before = new File(tempFile);
+        File newPath = new File(outPutFile);
+        return before.renameTo(newPath);
+    }
+
+    public static long getFileSize(String fileName) {
+        File file = new File(fileName);
+        if (file.exists()) {
+            FileOutputStream fileOutputStream = null;
+            try {
+                fileOutputStream = new FileOutputStream(file);
+                return fileOutputStream.getChannel().size();
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                safeClose(fileOutputStream);
+            }
+        }
+        return 0;
+    }
+
+    public static void removeFile(String tempOutputPath) {
+        File file = new File(tempOutputPath);
+        file.delete();
     }
 }

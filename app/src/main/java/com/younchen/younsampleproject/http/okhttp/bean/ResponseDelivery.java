@@ -42,7 +42,7 @@ public class ResponseDelivery {
         public void run() {
             switch (mDownloadStatus.getStatus()) {
                 case DownLoadStatus.START:
-                    mCallBack.onStart(mDownloadStatus.getLength());
+                    mCallBack.onStart(mDownloadStatus.getCurrent(), mDownloadStatus.getLength());
                     break;
                 case DownLoadStatus.PROGRESS:
                     mCallBack.onProgress(mDownloadStatus.getCurrent(), mDownloadStatus.getLength(), mDownloadStatus.getPercent());

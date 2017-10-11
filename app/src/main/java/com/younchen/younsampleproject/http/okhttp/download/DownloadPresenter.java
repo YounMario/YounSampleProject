@@ -42,8 +42,9 @@ public class DownloadPresenter {
     private void download(String downLoadUrl) {
         setStatus(DOWNLOADING);
         DownloadModel.getInstance().download(downLoadUrl, new CallBack() {
+
             @Override
-            public void onStart(long length) {
+            public void onStart(long current, long total) {
                 mDownLoadView.downloadStart();
             }
 
@@ -73,7 +74,11 @@ public class DownloadPresenter {
     private void pauseDownload(String url) {
         setStatus(PAUSE);
         mDownLoadView.downloadPause();
-        DownloadModel.getInstance().pause(String.valueOf(url.hashCode()));
+        DownloadModel.getInstance().pause(url);
+    }
+
+    public void cancelAll() {
+        DownloadModel.getInstance().cancel();
     }
 
     private void resumeDownload(String url) {

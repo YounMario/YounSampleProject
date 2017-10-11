@@ -16,6 +16,9 @@ public class DownLoadResponse implements ProgressResponseBody.ProgressListener {
 
     public DownLoadResponse(ResponseDelivery delivery, CallBack callBack) {
         mResponseDelivery = delivery;
+        if (callBack == null) {
+            throw new RuntimeException("call back cannot be null");
+        }
         mDownloadStatue = new DownLoadStatus(callBack);
     }
 

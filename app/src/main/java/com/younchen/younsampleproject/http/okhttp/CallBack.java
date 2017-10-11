@@ -6,7 +6,7 @@ package com.younchen.younsampleproject.http.okhttp;
 
 public interface CallBack {
 
-    void onStart(long length);
+    void onStart(long current, long total);
 
     void onProgress(long current, long total, int percent);
 

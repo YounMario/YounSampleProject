@@ -137,4 +137,10 @@ public class DownloadSample extends BaseFragment implements DownLoadView {
     public void downloadFail(Throwable throwable) {
         mMessageText.setText("download failed:" + throwable.getMessage());
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mDownloadPresenter.cancelAll();
+    }
 }

@@ -2,7 +2,10 @@ package com.younchen.younsampleproject.http.okhttp.download;
 
 import android.os.Handler;
 import android.os.Looper;
+import android.support.annotation.NonNull;
 
+import com.younchen.younsampleproject.App;
+import com.younchen.younsampleproject.commons.log.YLog;
 import com.younchen.younsampleproject.commons.utils.FileUtils;
 import com.younchen.younsampleproject.commons.utils.MD5Utils;
 import com.younchen.younsampleproject.http.okhttp.CallBack;
@@ -13,6 +16,10 @@ import com.younchen.younsampleproject.http.okhttp.bean.ResponseDelivery;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.RandomAccessFile;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -22,11 +29,7 @@ import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import rx.Observable;
-import rx.Scheduler;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.functions.Func1;
-import rx.schedulers.Schedulers;
+import okhttp3.ResponseBody;
 
 /**
  * Created by yinlongquan on 2017/9/20.
@@ -34,13 +37,14 @@ import rx.schedulers.Schedulers;
 
 public class DownloadModel {
 
+    private static final String TAG = "DownloadModel";
     private static DownloadModel mIns;
     private OkHttpClient mOkHttpClient;
     private Handler mHandler;
 
 
     private ConcurrentHashMap<String, ProgressResponseBody.ProgressListener> mDownloadListenerMap;
-    private HashMap<String, Call> mDownloading;
+    private HashMap<String, DownLoadInfo> mDownloading;
     private ResponseDelivery mResponseDelivery;
     private DownloadInfoProvider mDownloadInfoProvider;
 
@@ -81,28 +85,32 @@ public class DownloadModel {
     }
 
     public void download(final String url, final CallBack callBack) {
-        Observable.just(url).filter(new Func1<String, Boolean>() {
-            @Override
-            public Boolean call(String s) {
-                return !mDownloading.containsKey(s);
-            }
-        }).flatMap(new Func1<String, Observable<DownLoadInfo>>() {
-            @Override
-            public Observable<DownLoadInfo> call(String s) {
-                DownLoadInfo downLoadInfo = createDownloadInfo(s);
-                downLoadInfo.setCallback(callBack);
-                return download(downLoadInfo);
-            }
-        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+        if (mDownloading.containsKey(getTag(url))) {
+            YLog.i(TAG, " download already started");
+            return;
+        }
+        if (FileUtils.isExist(getSavePath(url))) {
+            YLog.i(TAG, "already downloaded");
+            callBack.onFinish();
+            return;
+        }
+        DownLoadInfo info = createDownloadInfo(url, callBack);
+        realDownload(info);
     }
 
-    private Observable download(final DownLoadInfo info) {
+    private void realDownload(final DownLoadInfo info) {
+        final long start = info.getDownloadedSize();
+        YLog.i(TAG, " start real download begin:" + start + " out put path :" + info.getTempOutputPath());
         final String tag = getTag(info.getUrl());
-        final Request request = new Request.Builder().url(info.getUrl()).tag(tag).build();
-        final DownLoadResponse downLoadResponse = new DownLoadResponse(mResponseDelivery, callBack);
+        final Request request = new Request.Builder().url(info.getUrl()).header("RANGE", "bytes=" + start + "-").tag(tag).build();
+        final DownLoadResponse downLoadResponse = new DownLoadResponse(mResponseDelivery, info.getCallBack());
+
         mDownloadListenerMap.put(tag, downLoadResponse);
         Call download = mOkHttpClient.newCall(request);
-        mDownloading.put(tag, download);
+        info.setDownloadTask(download);
+        info.setResponse(downLoadResponse);
+
+        mDownloading.put(tag, info);
         download.enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -111,55 +119,114 @@ public class DownloadModel {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                int lastDownloadOffset = mDownloadInfoProvider.getLastDownloadOffset(tag);
-                byte[] bytes = response.body().bytes();
-                FileUtils.randomWrite(info.getOutputPath(), bytes, lastDownloadOffset, bytes.length);
-                mDownloadInfoProvider.saveLastDownloadOffset(tag, lastDownloadOffset + bytes.length);
+                ResponseBody responseBody = response.body();
+                if (responseBody == null) {
+                    info.getCallBack().onFail(new RuntimeException("response body is null"));
+                    return;
+                }
+                YLog.i(TAG, " writing sdcard start..........");
+                RandomAccessFile randomAccessFile = null;
+                FileChannel channelOut = null;
+                InputStream inputStream = null;
+
+
+                long total = mDownloadInfoProvider.getContentLength(tag);
+                if (total == 0) {
+                    total = responseBody.contentLength();
+                    YLog.i(TAG, " content length:" + total);
+                    if (total > 0) {
+                        mDownloadInfoProvider.saveContentLength(tag, total);
+                    }
+                }
+
+                YLog.i(TAG, " start index :" + start + " total :" + total);
+                try {
+                    inputStream = responseBody.byteStream();
+                    randomAccessFile = new RandomAccessFile(info.getTempOutputPath(), "rw");
+                    channelOut = randomAccessFile.getChannel();
+                    MappedByteBuffer mappedByteBuffer = channelOut.map(FileChannel.MapMode.READ_WRITE, start, total - start);
+                    byte[] buffer = new byte[4096];
+                    int readLength;
+
+                    long downloadSize = start;
+                    while ((readLength = inputStream.read(buffer)) != -1) {
+                        downloadSize += readLength;
+                        info.setDownloadedSize(downloadSize);
+                        mappedByteBuffer.put(buffer, 0, readLength);
+                    }
+                    renameOutputPath(info);
+                    mDownloadInfoProvider.clearLastDownload(tag);
+                    info.getCallBack().onFinish();
+                    mDownloading.remove(tag);
+                } catch (Exception ex) {
+                    mDownloading.remove(tag);
+                    YLog.i(TAG, " error to write file :" + ex.getMessage());
+                    ex.printStackTrace();
+                } finally {
+                    FileUtils.safeClose(inputStream);
+                    FileUtils.safeClose(randomAccessFile);
+                    FileUtils.safeClose(channelOut);
+                }
             }
         });
     }
 
-
-    private long getContentLength(String downloadUrl) {
-        Request request = new Request.Builder()
-                .url(downloadUrl)
-                .build();
-        try {
-            Response response = mOkHttpClient.newCall(request).execute();
-            if (response != null && response.isSuccessful()) {
-                long contentLength = response.body().contentLength();
-                response.close();
-                return contentLength == 0 ? DownLoadInfo.TOTAL_ERROR : contentLength;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return DownLoadInfo.TOTAL_ERROR;
+    private void renameOutputPath(DownLoadInfo tempOutputPath) {
+        String tempFile = tempOutputPath.getTempOutputPath();
+        String outPutFile = tempFile.replace(".temp", "");
+        FileUtils.rename(tempFile, outPutFile);
     }
 
-    private DownLoadInfo createDownloadInfo(String url) {
+
+    private DownLoadInfo createDownloadInfo(String url, CallBack callBack) {
         DownLoadInfo downLoadInfo = new DownLoadInfo();
         downLoadInfo.setUrl(url);
-        downLoadInfo.setOutputPath(mSavePath + File.separator + url);
-        long getContentLength = getContentLength(url);
-        downLoadInfo.setContentLength(getContentLength);
+        downLoadInfo.setCallback(callBack);
+        loadDownloadedInfo(downLoadInfo);
         return downLoadInfo;
     }
+
+    private void loadDownloadedInfo(DownLoadInfo downLoadInfo) {
+        getRealFileName(downLoadInfo);
+        YLog.i(TAG, " real output file:" + downLoadInfo.getOutputPath());
+        if (FileUtils.isExist(downLoadInfo.getTempOutputPath())) {
+            YLog.i(TAG, " temp output file:" + downLoadInfo.getTempOutputPath());
+            long lastDownloadedOffset = mDownloadInfoProvider.getLastDownloadOffset(getTag(downLoadInfo.getUrl()));
+            YLog.i(TAG, "last downloaded offset:" + lastDownloadedOffset);
+            downLoadInfo.setDownloadedSize(lastDownloadedOffset);
+        }
+    }
+
+    private void getRealFileName(DownLoadInfo downLoadInfo) {
+        String outputFileName = getSavePath(downLoadInfo.getUrl());
+        downLoadInfo.setOutputPath(outputFileName);
+        downLoadInfo.setTempOutputPath(downLoadInfo.getOutputPath() + ".temp");
+    }
+
+    private String getSavePath(String url) {
+        return mSavePath + File.separator + MD5Utils.getStringMd5(url);
+    }
+
 
     private String getTag(String url) {
         return MD5Utils.getStringMd5(url);
     }
 
 
-    public void pause(String tag) {
-        Call download = mDownloading.get(tag);
-        if (download != null && !download.isCanceled()) {
-            download.cancel();
+    public void pause(String url) {
+        String tag = getTag(url);
+        DownLoadInfo downloadInfo = mDownloading.get(tag);
+        if (downloadInfo != null && downloadInfo.getDownloadTask() != null && !downloadInfo.getDownloadTask().isCanceled()) {
+            YLog.i(TAG, "pause download URL:" + url);
+            if (!FileUtils.isExist(downloadInfo.getOutputPath())) {
+                mDownloadInfoProvider.saveLastDownloadOffset(tag, downloadInfo.getDownloadedSize());
+            }
+            mDownloading.remove(getTag(url));
+            downloadInfo.getDownloadTask().cancel();
         }
     }
 
-    public void cancel(String tag) {
-        pause(tag);
-        mDownloadInfoProvider.clearLastDownload(tag);
+    public void cancel() {
+        mOkHttpClient.dispatcher().cancelAll();
     }
 }
