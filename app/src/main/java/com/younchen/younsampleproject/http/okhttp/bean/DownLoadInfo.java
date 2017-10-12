@@ -16,7 +16,6 @@ public class DownLoadInfo {
 
     private long mDownloadSize;
     private CallBack mCallBack;
-    private DownLoadResponse response;
     private Call mDownloadTask;
 
     public String getUrl() {
@@ -65,13 +64,5 @@ public class DownLoadInfo {
 
     public Call getDownloadTask() {
         return mDownloadTask;
-    }
-
-    public void setResponse(DownLoadResponse response) {
-        this.response = response;
-    }
-
-    public DownLoadResponse getResponse() {
-        return response;
     }
 }

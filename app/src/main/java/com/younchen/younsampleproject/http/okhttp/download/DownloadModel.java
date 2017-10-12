@@ -1,17 +1,12 @@
 package com.younchen.younsampleproject.http.okhttp.download;
 
-import android.os.Handler;
-import android.os.Looper;
-import android.support.annotation.NonNull;
-
-import com.younchen.younsampleproject.App;
 import com.younchen.younsampleproject.commons.log.YLog;
 import com.younchen.younsampleproject.commons.utils.FileUtils;
 import com.younchen.younsampleproject.commons.utils.MD5Utils;
 import com.younchen.younsampleproject.http.okhttp.CallBack;
 import com.younchen.younsampleproject.http.okhttp.ProgressResponseBody;
 import com.younchen.younsampleproject.http.okhttp.bean.DownLoadInfo;
-import com.younchen.younsampleproject.http.okhttp.bean.DownLoadResponse;
+import com.younchen.younsampleproject.http.okhttp.bean.DownloadListener;
 import com.younchen.younsampleproject.http.okhttp.bean.ResponseDelivery;
 
 import java.io.File;
@@ -25,7 +20,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import okhttp3.Call;
 import okhttp3.Callback;
-import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -40,12 +34,10 @@ public class DownloadModel {
     private static final String TAG = "DownloadModel";
     private static DownloadModel mIns;
     private OkHttpClient mOkHttpClient;
-    private Handler mHandler;
 
 
     private ConcurrentHashMap<String, ProgressResponseBody.ProgressListener> mDownloadListenerMap;
     private HashMap<String, DownLoadInfo> mDownloading;
-    private ResponseDelivery mResponseDelivery;
     private DownloadInfoProvider mDownloadInfoProvider;
 
     private File mSavePath = FileUtils.getSdCardFileOrDir("youn_sample");
@@ -58,25 +50,11 @@ public class DownloadModel {
     }
 
     private DownloadModel() {
-        mHandler = new Handler(Looper.getMainLooper());
         mDownloadListenerMap = new ConcurrentHashMap<>();
         mDownloading = new HashMap<>();
-        mResponseDelivery = new ResponseDelivery(mHandler);
         mDownloadInfoProvider = new DownloadInfoProvider();
 
-        mOkHttpClient = new OkHttpClient.Builder()
-                .addNetworkInterceptor(new Interceptor() {
-                    @Override
-                    public Response intercept(Chain chain) throws IOException {
-                        String tag = (String) chain.request().tag();
-                        ProgressResponseBody.ProgressListener progressListener = mDownloadListenerMap.get(tag);
-                        Response originalResponse = chain.proceed(chain.request());
-                        return originalResponse.newBuilder()
-                                .body(new ProgressResponseBody(originalResponse.body(), progressListener))
-                                .build();
-                    }
-                })
-                .build();
+        mOkHttpClient = new OkHttpClient();
         if (!mSavePath.exists()) {
             if (!mSavePath.mkdir()) {
                 throw new RuntimeException("create save path error");
@@ -103,32 +81,28 @@ public class DownloadModel {
         YLog.i(TAG, " start real download begin:" + start + " out put path :" + info.getTempOutputPath());
         final String tag = getTag(info.getUrl());
         final Request request = new Request.Builder().url(info.getUrl()).header("RANGE", "bytes=" + start + "-").tag(tag).build();
-        final DownLoadResponse downLoadResponse = new DownLoadResponse(mResponseDelivery, info.getCallBack());
+        final DownloadListener downloadListener = new DownloadListener(info.getCallBack());
 
-        mDownloadListenerMap.put(tag, downLoadResponse);
-        Call download = mOkHttpClient.newCall(request);
+        final Call download = mOkHttpClient.newCall(request);
         info.setDownloadTask(download);
-        info.setResponse(downLoadResponse);
-
         mDownloading.put(tag, info);
         download.enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                downLoadResponse.onFail(e);
+                info.getCallBack().onFail(e);
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 ResponseBody responseBody = response.body();
                 if (responseBody == null) {
-                    info.getCallBack().onFail(new RuntimeException("response body is null"));
+                    downloadListener.onFail(new RuntimeException("response body is null"));
                     return;
                 }
                 YLog.i(TAG, " writing sdcard start..........");
                 RandomAccessFile randomAccessFile = null;
                 FileChannel channelOut = null;
                 InputStream inputStream = null;
-
 
                 long total = mDownloadInfoProvider.getContentLength(tag);
                 if (total == 0) {
@@ -147,16 +121,19 @@ public class DownloadModel {
                     MappedByteBuffer mappedByteBuffer = channelOut.map(FileChannel.MapMode.READ_WRITE, start, total - start);
                     byte[] buffer = new byte[4096];
                     int readLength;
-
                     long downloadSize = start;
+                    downloadListener.onPreDownload(total);
                     while ((readLength = inputStream.read(buffer)) != -1) {
                         downloadSize += readLength;
                         info.setDownloadedSize(downloadSize);
+                        int percentage = (int) (downloadSize * 100 * 1.0 / total);
+                        YLog.i(TAG, " current download :" + downloadSize + " total:" + total + " percentage:" + percentage);
+                        downloadListener.onProgress(downloadSize, total, percentage);
                         mappedByteBuffer.put(buffer, 0, readLength);
                     }
                     renameOutputPath(info);
                     mDownloadInfoProvider.clearLastDownload(tag);
-                    info.getCallBack().onFinish();
+                    downloadListener.onFinish();
                     mDownloading.remove(tag);
                 } catch (Exception ex) {
                     mDownloading.remove(tag);

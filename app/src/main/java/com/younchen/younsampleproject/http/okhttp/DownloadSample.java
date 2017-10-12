@@ -35,6 +35,9 @@ public class DownloadSample extends BaseFragment implements DownLoadView {
     ProgressBar progressBar;
     @BindView(R.id.txt_message)
     TextView mMessageText;
+    @BindView(R.id.txt_progress)
+    TextView mTxtProgress;
+
 
     private DownloadPresenter mDownloadPresenter;
 
@@ -106,6 +109,7 @@ public class DownloadSample extends BaseFragment implements DownLoadView {
     @Override
     public void progress(int progress) {
         progressBar.setProgress(progress);
+        mTxtProgress.setText(progress + "%");
     }
 
     @Override

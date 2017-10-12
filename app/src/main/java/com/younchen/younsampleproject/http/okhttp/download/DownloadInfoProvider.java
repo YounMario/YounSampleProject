@@ -1,14 +1,10 @@
 package com.younchen.younsampleproject.http.okhttp.download;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 
 /**
  * Created by yinlongquan on 2017/10/10.
  */
 public class DownloadInfoProvider {
-
-    private SharedPreferences sharedPreferences;
 
 
     public long getLastDownloadOffset(String tag) {
