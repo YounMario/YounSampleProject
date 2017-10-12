@@ -26,7 +26,7 @@ public class ProcessFragment extends CommonListFragment<ProcessItem> {
         init();
     }
 
-    private void init() {
+    protected void init() {
         mProcessViewModel = new ProcessViewModel(getActivity());
         mProcessViewModel.getData().observe(this, new Observer<List<ProcessItem>>() {
             @Override

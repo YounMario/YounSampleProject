@@ -36,6 +36,11 @@ public abstract class CommonListFragment<T> extends BaseFragment {
         mRecycleView.setLayoutManager(new LinearLayoutManager(getContext()));
         mAdapter = createAdapter();
         mRecycleView.setAdapter(mAdapter);
+        init();
+    }
+
+    protected void init() {
+
     }
 
 

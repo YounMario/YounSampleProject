@@ -10,6 +10,7 @@ import okhttp3.Call;
 
 public class DownLoadInfo {
 
+
     private String mUrl;
     private String mOutputPath;
     private String mTempOutputPath;
@@ -17,6 +18,15 @@ public class DownLoadInfo {
     private long mDownloadSize;
     private CallBack mCallBack;
     private Call mDownloadTask;
+    private String mTag;
+    private long mContentLength;
+
+    public static final int NORMAL = 0;
+    public static final int DOWNLOADING = 183;
+    public static final int PAUSE = 957;
+    public static final int FINISHED = 15611;
+    private int state = NORMAL;
+
 
     public String getUrl() {
         return mUrl;
@@ -64,5 +74,29 @@ public class DownLoadInfo {
 
     public Call getDownloadTask() {
         return mDownloadTask;
+    }
+
+    public void setTag(String tag) {
+        this.mTag = tag;
+    }
+
+    public String getTag() {
+        return mTag;
+    }
+
+    public long getContentLength() {
+        return mContentLength;
+    }
+
+    public void setContentLength(long contentLength) {
+        this.mContentLength = contentLength;
+    }
+
+    public int getState() {
+        return state;
+    }
+
+    public void setState(int state) {
+        this.state = state;
     }
 }

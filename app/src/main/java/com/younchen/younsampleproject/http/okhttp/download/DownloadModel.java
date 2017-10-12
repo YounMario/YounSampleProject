@@ -4,10 +4,8 @@ import com.younchen.younsampleproject.commons.log.YLog;
 import com.younchen.younsampleproject.commons.utils.FileUtils;
 import com.younchen.younsampleproject.commons.utils.MD5Utils;
 import com.younchen.younsampleproject.http.okhttp.CallBack;
-import com.younchen.younsampleproject.http.okhttp.ProgressResponseBody;
 import com.younchen.younsampleproject.http.okhttp.bean.DownLoadInfo;
 import com.younchen.younsampleproject.http.okhttp.bean.DownloadListener;
-import com.younchen.younsampleproject.http.okhttp.bean.ResponseDelivery;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,7 +14,6 @@ import java.io.RandomAccessFile;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.util.HashMap;
-import java.util.concurrent.ConcurrentHashMap;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -36,7 +33,6 @@ public class DownloadModel {
     private OkHttpClient mOkHttpClient;
 
 
-    private ConcurrentHashMap<String, ProgressResponseBody.ProgressListener> mDownloadListenerMap;
     private HashMap<String, DownLoadInfo> mDownloading;
     private DownloadInfoProvider mDownloadInfoProvider;
 
@@ -50,7 +46,6 @@ public class DownloadModel {
     }
 
     private DownloadModel() {
-        mDownloadListenerMap = new ConcurrentHashMap<>();
         mDownloading = new HashMap<>();
         mDownloadInfoProvider = new DownloadInfoProvider();
 
@@ -76,16 +71,31 @@ public class DownloadModel {
         realDownload(info);
     }
 
+    public void download(DownLoadInfo downloadInfo) {
+        String tag = getTag(downloadInfo.getUrl());
+        if (mDownloading.containsKey(tag)) {
+            YLog.i(TAG, " download already started");
+            return;
+        }
+        if (FileUtils.isExist(getSavePath(downloadInfo.getUrl()))) {
+            YLog.i(TAG, "already downloaded");
+            if (downloadInfo.getCallBack() != null) {
+                downloadInfo.getCallBack().onFinish();
+            }
+            return;
+        }
+        realDownload(downloadInfo);
+    }
+
     private void realDownload(final DownLoadInfo info) {
         final long start = info.getDownloadedSize();
         YLog.i(TAG, " start real download begin:" + start + " out put path :" + info.getTempOutputPath());
-        final String tag = getTag(info.getUrl());
-        final Request request = new Request.Builder().url(info.getUrl()).header("RANGE", "bytes=" + start + "-").tag(tag).build();
+        final Request request = new Request.Builder().url(info.getUrl()).header("RANGE", "bytes=" + start + "-").tag(info.getTag()).build();
         final DownloadListener downloadListener = new DownloadListener(info.getCallBack());
 
         final Call download = mOkHttpClient.newCall(request);
         info.setDownloadTask(download);
-        mDownloading.put(tag, info);
+        mDownloading.put(info.getTag(), info);
         download.enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -94,6 +104,10 @@ public class DownloadModel {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
+                writeToFile(response);
+            }
+
+            private void writeToFile(Response response) {
                 ResponseBody responseBody = response.body();
                 if (responseBody == null) {
                     downloadListener.onFail(new RuntimeException("response body is null"));
@@ -104,12 +118,12 @@ public class DownloadModel {
                 FileChannel channelOut = null;
                 InputStream inputStream = null;
 
-                long total = mDownloadInfoProvider.getContentLength(tag);
+                long total = mDownloadInfoProvider.getContentLength(info.getTag());
                 if (total == 0) {
                     total = responseBody.contentLength();
                     YLog.i(TAG, " content length:" + total);
                     if (total > 0) {
-                        mDownloadInfoProvider.saveContentLength(tag, total);
+                        mDownloadInfoProvider.saveContentLength(info.getTag(), total);
                     }
                 }
 
@@ -132,11 +146,14 @@ public class DownloadModel {
                         mappedByteBuffer.put(buffer, 0, readLength);
                     }
                     renameOutputPath(info);
-                    mDownloadInfoProvider.clearLastDownload(tag);
+                    mDownloadInfoProvider.clearLastDownload(info.getTag());
                     downloadListener.onFinish();
-                    mDownloading.remove(tag);
+                    mDownloading.remove(info.getTag());
                 } catch (Exception ex) {
-                    mDownloading.remove(tag);
+                    mDownloading.remove(info.getTag());
+                    if (!FileUtils.isExist(info.getOutputPath())) {
+                        mDownloadInfoProvider.saveLastDownloadOffset(info.getTag(), info.getDownloadedSize());
+                    }
                     YLog.i(TAG, " error to write file :" + ex.getMessage());
                     ex.printStackTrace();
                 } finally {
@@ -154,11 +171,17 @@ public class DownloadModel {
         FileUtils.rename(tempFile, outPutFile);
     }
 
+    public DownLoadInfo createDownloadInfo(String url) {
+        return createDownloadInfo(url, null);
+    }
 
-    private DownLoadInfo createDownloadInfo(String url, CallBack callBack) {
+    public DownLoadInfo createDownloadInfo(String url, CallBack callBack) {
         DownLoadInfo downLoadInfo = new DownLoadInfo();
+        String tag = getTag(url);
         downLoadInfo.setUrl(url);
+        downLoadInfo.setTag(tag);
         downLoadInfo.setCallback(callBack);
+        downLoadInfo.setContentLength(mDownloadInfoProvider.getContentLength(tag));
         loadDownloadedInfo(downLoadInfo);
         return downLoadInfo;
     }
@@ -195,15 +218,24 @@ public class DownloadModel {
         DownLoadInfo downloadInfo = mDownloading.get(tag);
         if (downloadInfo != null && downloadInfo.getDownloadTask() != null && !downloadInfo.getDownloadTask().isCanceled()) {
             YLog.i(TAG, "pause download URL:" + url);
-            if (!FileUtils.isExist(downloadInfo.getOutputPath())) {
-                mDownloadInfoProvider.saveLastDownloadOffset(tag, downloadInfo.getDownloadedSize());
-            }
             mDownloading.remove(getTag(url));
             downloadInfo.getDownloadTask().cancel();
         }
     }
 
-    public void cancel() {
+    public void cancelAll() {
         mOkHttpClient.dispatcher().cancelAll();
+    }
+
+
+    public void cancel(DownLoadInfo downLoadInfo) {
+        pause(downLoadInfo.getUrl());
+        mDownloadInfoProvider.clearLastDownload(downLoadInfo.getTag());
+        FileUtils.removeFile(downLoadInfo.getTempOutputPath());
+        FileUtils.removeFile(downLoadInfo.getOutputPath());
+    }
+
+    public boolean isDownloaded(DownLoadInfo downloadInfo) {
+        return FileUtils.isExist(downloadInfo.getOutputPath());
     }
 }

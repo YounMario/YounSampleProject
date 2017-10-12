@@ -78,7 +78,7 @@ public class DownloadPresenter {
     }
 
     public void cancelAll() {
-        DownloadModel.getInstance().cancel();
+        DownloadModel.getInstance().cancelAll();
     }
 
     private void resumeDownload(String url) {
