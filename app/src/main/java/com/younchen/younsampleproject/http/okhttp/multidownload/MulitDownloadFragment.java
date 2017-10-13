@@ -1,7 +1,6 @@
 package com.younchen.younsampleproject.http.okhttp.multidownload;
 
 import com.younchen.younsampleproject.commons.adapter.BaseAdapter;
-import com.younchen.younsampleproject.commons.adapter.MulitTypeAdapter;
 import com.younchen.younsampleproject.commons.fragment.CommonListFragment;
 import com.younchen.younsampleproject.http.okhttp.bean.DownLoadInfo;
 import com.younchen.younsampleproject.http.okhttp.download.DownloadModel;
@@ -38,12 +37,13 @@ public class MulitDownloadFragment extends CommonListFragment {
 
     @Override
     public BaseAdapter createAdapter() {
-        return new DownloadListAdapter(getContext());
+        mAdapter = new DownloadListAdapter(getContext(), mRecycleView);
+        return mAdapter;
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        DownloadModel.getInstance().cancelAll();
+        mAdapter.onDestroy();
     }
 }

@@ -58,6 +58,10 @@ public class DownloadModel {
     }
 
     public void download(final String url, final CallBack callBack) {
+        download(url, -1, callBack);
+    }
+
+    public void download(final String url, int position, final CallBack callBack) {
         if (mDownloading.containsKey(getTag(url))) {
             YLog.i(TAG, " download already started");
             return;
@@ -68,6 +72,7 @@ public class DownloadModel {
             return;
         }
         DownLoadInfo info = createDownloadInfo(url, callBack);
+        info.setIndex(position);
         realDownload(info);
     }
 
@@ -96,6 +101,7 @@ public class DownloadModel {
         final Call download = mOkHttpClient.newCall(request);
         info.setDownloadTask(download);
         mDownloading.put(info.getTag(), info);
+        downloadListener.onPreDownload(info.getDownloadedSize());
         download.enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -136,13 +142,17 @@ public class DownloadModel {
                     byte[] buffer = new byte[4096];
                     int readLength;
                     long downloadSize = start;
-                    downloadListener.onPreDownload(total);
+                    int lastPercent = 0;
                     while ((readLength = inputStream.read(buffer)) != -1) {
                         downloadSize += readLength;
                         info.setDownloadedSize(downloadSize);
-                        int percentage = (int) (downloadSize * 100 * 1.0 / total);
-                        YLog.i(TAG, " current download :" + downloadSize + " total:" + total + " percentage:" + percentage);
-                        downloadListener.onProgress(downloadSize, total, percentage);
+
+                        int newPercent = (int) (downloadSize * 100 * 1.0 / total);
+                        if (newPercent - lastPercent > 2) {
+                            YLog.i(TAG, " current download :" + downloadSize + " total:" + total + " percentage:" + newPercent);
+                            downloadListener.onProgress(downloadSize, total, newPercent);
+                            lastPercent = newPercent;
+                        }
                         mappedByteBuffer.put(buffer, 0, readLength);
                     }
                     renameOutputPath(info);
@@ -218,8 +228,11 @@ public class DownloadModel {
         DownLoadInfo downloadInfo = mDownloading.get(tag);
         if (downloadInfo != null && downloadInfo.getDownloadTask() != null && !downloadInfo.getDownloadTask().isCanceled()) {
             YLog.i(TAG, "pause download URL:" + url);
-            mDownloading.remove(getTag(url));
+            mDownloading.remove(tag);
             downloadInfo.getDownloadTask().cancel();
+            if (downloadInfo.getIndex() >= 0 && downloadInfo.getCallBack() != null) {
+                downloadInfo.getCallBack().pause();
+            }
         }
     }
 
@@ -229,11 +242,20 @@ public class DownloadModel {
 
 
     public void cancel(DownLoadInfo downLoadInfo) {
-        pause(downLoadInfo.getUrl());
+        if (downLoadInfo.getIndex() >= 0 && downLoadInfo.getCallBack() != null) {
+            downLoadInfo.getCallBack().cancel();
+        }
+        String tag = getTag(downLoadInfo.getUrl());
+        DownLoadInfo downloadInfo = mDownloading.get(tag);
+        if (downloadInfo != null && downloadInfo.getDownloadTask() != null && !downloadInfo.getDownloadTask().isCanceled()) {
+            mDownloading.remove(tag);
+            downloadInfo.getDownloadTask().cancel();
+        }
         mDownloadInfoProvider.clearLastDownload(downLoadInfo.getTag());
         FileUtils.removeFile(downLoadInfo.getTempOutputPath());
         FileUtils.removeFile(downLoadInfo.getOutputPath());
     }
+
 
     public boolean isDownloaded(DownLoadInfo downloadInfo) {
         return FileUtils.isExist(downloadInfo.getOutputPath());

@@ -12,5 +12,9 @@ public interface CallBack {
 
     void onFinish();
 
+    void pause();
+
+    void cancel();
+
     void onFail(Throwable throwable);
 }

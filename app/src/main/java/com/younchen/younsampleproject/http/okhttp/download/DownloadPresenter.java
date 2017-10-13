@@ -59,6 +59,16 @@ public class DownloadPresenter {
             }
 
             @Override
+            public void pause() {
+
+            }
+
+            @Override
+            public void cancel() {
+
+            }
+
+            @Override
             public void onFail(Throwable throwable) {
                 mDownLoadView.downloadFail(throwable);
             }

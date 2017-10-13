@@ -40,7 +40,7 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<ViewHolder> {
         notifyDataSetChanged();
     }
 
-    public void remove(List<T> selected){
+    public void remove(List<T> selected) {
         data.removeAll(selected);
         notifyDataSetChanged();
     }
@@ -78,11 +78,22 @@ public abstract class BaseAdapter<T> extends RecyclerView.Adapter<ViewHolder> {
         notifyDataSetChanged();
     }
 
+    public void remove(int index) {
+        if (index > -1 && index < data.size()) {
+            data.remove(index);
+            notifyItemRemoved(index);
+        }
+    }
+
     public void delete(T item) {
         int index = data.indexOf(item);
         if (index > -1 && index < data.size()) {
             data.remove(index);
+            notifyItemRemoved(index);
         }
-        notifyItemRemoved(index);
+    }
+
+    public void onDestroy() {
+
     }
 }
