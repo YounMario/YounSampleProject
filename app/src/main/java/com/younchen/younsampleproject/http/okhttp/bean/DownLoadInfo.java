@@ -25,7 +25,7 @@ public class DownLoadInfo implements Serializable {
     private int mIndex = -1;
 
     public static final int NORMAL = 0;
-    public static final int PREPARE = 2323;
+    public static final int START = 2323;
     public static final int DOWNLOADING = 183;
     public static final int PAUSE = 957;
     public static final int FINISHED = 15611;
@@ -33,6 +33,7 @@ public class DownLoadInfo implements Serializable {
     public static final int CANCEL = 1323;
     private int state = NORMAL;
     private int mProgress;
+    private String mDownloadName;
 
 
     public String getUrl() {
@@ -121,5 +122,13 @@ public class DownLoadInfo implements Serializable {
 
     public int getProgress() {
         return mProgress;
+    }
+
+    public void setName(String downloadName) {
+        this.mDownloadName = downloadName;
+    }
+
+    public String getDownloadName() {
+        return mDownloadName;
     }
 }

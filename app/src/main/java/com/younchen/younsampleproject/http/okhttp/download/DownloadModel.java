@@ -191,6 +191,8 @@ public class DownloadModel {
         downLoadInfo.setUrl(url);
         downLoadInfo.setTag(tag);
         downLoadInfo.setCallback(callBack);
+        String downloadName = url.substring(url.lastIndexOf('/'));
+        downLoadInfo.setName(downloadName);
         downLoadInfo.setContentLength(mDownloadInfoProvider.getContentLength(tag));
         loadDownloadedInfo(downLoadInfo);
         return downLoadInfo;

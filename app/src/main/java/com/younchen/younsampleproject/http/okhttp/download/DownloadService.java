@@ -5,8 +5,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationManagerCompat;
 import android.support.v4.content.LocalBroadcastManager;
 
+import com.younchen.younsampleproject.R;
 import com.younchen.younsampleproject.http.okhttp.CallBack;
 import com.younchen.younsampleproject.http.okhttp.bean.DownLoadInfo;
 
@@ -27,6 +30,8 @@ public class DownloadService extends Service {
     private static final String KEY_DOWNLOAD_URL = "download_url";
 
     public static final String KEY_DOWNLOAD_INFO = "key_download_info";
+
+    private NotificationManagerCompat mNotificationManager;
 
     @Nullable
     @Override
@@ -74,6 +79,12 @@ public class DownloadService extends Service {
         return super.onStartCommand(intent, flags, startId);
     }
 
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        mNotificationManager = NotificationManagerCompat.from(getApplicationContext());
+    }
+
     private void pause(Intent intent) {
         String url = intent.getStringExtra(KEY_DOWNLOAD_URL);
         DownloadModel.getInstance().pause(url);
@@ -84,76 +95,119 @@ public class DownloadService extends Service {
         int position = intent.getIntExtra(KEY_POSITION, -1);
         DownLoadInfo info = DownloadModel.getInstance().createDownloadInfo(url);
         info.setIndex(position);
-        info.setCallback(new DownloadCallBack(this, position));
+        info.setCallback(new DownloadCallBack(this, info, position, mNotificationManager));
         DownloadModel.getInstance().cancel(info);
     }
 
     private void download(Intent intent) {
         String url = intent.getStringExtra(KEY_DOWNLOAD_URL);
         int position = intent.getIntExtra(KEY_POSITION, -1);
-        DownloadModel.getInstance().download(url, position, new DownloadCallBack(this, position));
+        DownLoadInfo downLoadInfo = DownloadModel.getInstance().createDownloadInfo(url);
+        downLoadInfo.setIndex(position);
+        downLoadInfo.setCallback(new DownloadCallBack(this, downLoadInfo, position, mNotificationManager));
+        DownloadModel.getInstance().download(downLoadInfo);
     }
 
     class DownloadCallBack implements CallBack {
 
         private int mIndex;
         private Intent mIntent;
+        private long mLastTime;
         private LocalBroadcastManager mLocalBroadCastManager;
 
-        public DownloadCallBack(Context context, int index) {
+        private NotificationManagerCompat mNotificationManagerCompat;
+        private NotificationCompat.Builder mNotificationBuilder;
+
+        private DownLoadInfo mDownloadInfo;
+
+        public DownloadCallBack(Context context, DownLoadInfo info, int index, NotificationManagerCompat notificationManagerCompat) {
             this.mIndex = index;
             mLocalBroadCastManager = LocalBroadcastManager.getInstance(context);
             mIntent = new Intent(ACTION_DOWNLOAD_LOCAL_BROADCAST);
+            mNotificationManagerCompat = notificationManagerCompat;
+            mNotificationBuilder = new NotificationCompat.Builder(context);
+            mNotificationBuilder.setSmallIcon(R.mipmap.ic_launcher);
+            mDownloadInfo = info;
+        }
+
+        private void updateNotification() {
+            mNotificationManagerCompat.notify(mIndex + 10000, mNotificationBuilder.build());
         }
 
         @Override
         public void onStart(long current, long total) {
-            DownLoadInfo downLoadInfo = new DownLoadInfo();
-            downLoadInfo.setState(DownLoadInfo.PREPARE);
-            downLoadInfo.setDownloadedSize(current);
-            downLoadInfo.setContentLength(total);
-            downLoadInfo.setIndex(mIndex);
-            mIntent.putExtra(KEY_DOWNLOAD_INFO, downLoadInfo);
+            mDownloadInfo.setState(DownLoadInfo.START);
+            mDownloadInfo.setDownloadedSize(current);
+            mDownloadInfo.setContentLength(total);
+            mDownloadInfo.setIndex(mIndex);
+            mIntent.putExtra(KEY_DOWNLOAD_INFO, mDownloadInfo);
             mLocalBroadCastManager.sendBroadcast(mIntent);
+            mNotificationBuilder
+                    .setContentTitle(mDownloadInfo.getDownloadName())
+                    .setContentText("download start")
+                    .setProgress(100, 0, true)
+                    .setTicker("download start:" + mDownloadInfo.getDownloadName());
+            updateNotification();
         }
 
         @Override
         public void onProgress(long current, long total, int percent) {
-            DownLoadInfo downLoadInfo = new DownLoadInfo();
-            downLoadInfo.setState(DownLoadInfo.DOWNLOADING);
-            downLoadInfo.setDownloadedSize(current);
-            downLoadInfo.setContentLength(total);
-            downLoadInfo.setProgress((int) (current * 100 / total));
-            downLoadInfo.setIndex(mIndex);
-            mIntent.putExtra(KEY_DOWNLOAD_INFO, downLoadInfo);
-            mLocalBroadCastManager.sendBroadcast(mIntent);
+            long timeNow = System.currentTimeMillis();
+            if (timeNow - mLastTime > 500) {
+                mDownloadInfo.setState(DownLoadInfo.DOWNLOADING);
+                mDownloadInfo.setDownloadedSize(current);
+                mDownloadInfo.setContentLength(total);
+                mDownloadInfo.setProgress((int) (current * 100 / total));
+                mDownloadInfo.setIndex(mIndex);
+
+                mIntent.putExtra(KEY_DOWNLOAD_INFO, mDownloadInfo);
+                mLocalBroadCastManager.sendBroadcast(mIntent);
+                mLastTime = timeNow;
+
+                mNotificationBuilder.setContentText("Downloading");
+                mNotificationBuilder.setProgress(100, percent, false);
+                updateNotification();
+            }
         }
 
         @Override
         public void onFinish() {
-            DownLoadInfo downLoadInfo = new DownLoadInfo();
-            downLoadInfo.setState(DownLoadInfo.FINISHED);
-            downLoadInfo.setIndex(mIndex);
-            mIntent.putExtra(KEY_DOWNLOAD_INFO, downLoadInfo);
+            mDownloadInfo.setState(DownLoadInfo.FINISHED);
+            mDownloadInfo.setIndex(mIndex);
+            mIntent.putExtra(KEY_DOWNLOAD_INFO, mDownloadInfo);
             mLocalBroadCastManager.sendBroadcast(mIntent);
+
+            mNotificationBuilder.setContentText("Download Complete");
+            mNotificationBuilder.setProgress(0, 0, false);
+            mNotificationBuilder.setTicker(mDownloadInfo.getDownloadName() + "downloadComplete");
+            updateNotification();
         }
 
         @Override
         public void pause() {
-            DownLoadInfo downLoadInfo = new DownLoadInfo();
-            downLoadInfo.setState(DownLoadInfo.PAUSE);
-            downLoadInfo.setIndex(mIndex);
-            mIntent.putExtra(KEY_DOWNLOAD_INFO, downLoadInfo);
+            mDownloadInfo.setState(DownLoadInfo.PAUSE);
+            mDownloadInfo.setIndex(mIndex);
+            mIntent.putExtra(KEY_DOWNLOAD_INFO, mDownloadInfo);
             mLocalBroadCastManager.sendBroadcast(mIntent);
+
+            mNotificationBuilder.setContentText("Download Paused");
+            mNotificationBuilder.setTicker(mDownloadInfo.getDownloadName() + " download Paused");
+            mNotificationBuilder.setProgress(100, mDownloadInfo.getProgress(), false);
+            updateNotification();
         }
 
         @Override
         public void cancel() {
-            DownLoadInfo downLoadInfo = new DownLoadInfo();
-            downLoadInfo.setState(DownLoadInfo.CANCEL);
-            downLoadInfo.setIndex(mIndex);
-            mIntent.putExtra(KEY_DOWNLOAD_INFO, downLoadInfo);
+            mDownloadInfo.setState(DownLoadInfo.CANCEL);
+            mDownloadInfo.setIndex(mIndex);
+            mIntent.putExtra(KEY_DOWNLOAD_INFO, mDownloadInfo);
             mLocalBroadCastManager.sendBroadcast(mIntent);
+
+            mNotificationBuilder.setContentText("Download Canceled");
+            mNotificationBuilder.setTicker(mDownloadInfo.getDownloadName() + " download Canceled");
+            updateNotification();
+
+            mNotificationManagerCompat.cancel(mIndex + 10000);
         }
 
         @Override

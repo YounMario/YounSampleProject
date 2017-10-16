@@ -106,7 +106,7 @@ public class DownloadListAdapter extends BaseAdapter<DownLoadInfo> {
                 case DownLoadInfo.NORMAL:
                     mDownloadAdapter.updateStateNormal(downLoadInfo);
                     break;
-                case DownLoadInfo.PREPARE:
+                case DownLoadInfo.START:
                     mDownloadAdapter.updateStateToPrepare(downLoadInfo);
                     break;
                 case DownLoadInfo.PAUSE:
