@@ -72,7 +72,6 @@
             android:enabled="true"
             android:exported="true"
             android:process=":dialer" />
-
         <service android:name=".http.okhttp.download.DownloadService" />
         <service
             android:name=".sys.notification.NotificationService"
@@ -84,12 +83,9 @@
                 <action android:name="android.service.notification.NotificationListenerService" />
             </intent-filter>
         </service>
-
         <service
             android:name=".sys.topquery.TopAppQueryService"
-            android:enabled="true">
-
-        </service>
+            android:enabled="true"></service>
 
         <activity android:name=".sys.loader.contact.CleanDetailActivity" />
 
@@ -99,10 +95,10 @@
 
         <activity android:name=".NotFound404Activity" />
         <activity android:name=".ui.view.textview.SetDefaultDialogActivity" />
-
         <activity
             android:name=".NewSettingDefaultGuideActivity"
             android:theme="@style/AppTheme.Transparent" />
+        <activity android:name=".kotlin.KotlinActivity"></activity>
     </application>
 
 </manifest>

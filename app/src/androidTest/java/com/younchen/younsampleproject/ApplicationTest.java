@@ -3,9 +3,12 @@ package com.younchen.younsampleproject;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.provider.ContactsContract;
+import android.provider.Settings;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
+import android.text.TextUtils;
 
 import junit.framework.Assert;
 
@@ -42,6 +45,61 @@ public class ApplicationTest{
             Assert.assertNotNull(lookUpKey);
             Assert.assertNotNull(lookUpNumber);
         }
+    }
+
+    @Test
+    public void testMatchXaid() {
+        String stringArray = "{0,1,2,3,4,5,6,7}";
+        Assert.assertEquals(true, xaidIn(stringArray));
+
+        String homeArray = "SAMSUNG;LEG;GOogLe";
+        Assert.assertEquals(true, homeBrandMatched(homeArray));
+
+        String s= Settings.System.getString(mContext
+                        .getContentResolver(),
+                Settings.System.ANDROID_ID);
+        Assert.assertNotNull(s);
+    }
+
+    private String getAndroidID() {
+        return Settings.System.getString(mContext
+                        .getContentResolver(),
+                Settings.System.ANDROID_ID);
+    }
+
+    @Test
+    public void testGetDimen() {
+        float dimens = mContext.getResources().getDimension(R.dimen.activity_vertical_margin);
+        Assert.assertNotNull(dimens);
+    }
+
+    private boolean xaidIn(String guideOn) {
+        String androidId = getAndroidID();
+        if (TextUtils.isEmpty(guideOn) || TextUtils.isEmpty(androidId) || androidId.length() < 10) {
+            return false;
+        }
+        char charToAbTest = androidId.charAt(9);
+        return guideOn.indexOf(charToAbTest) != -1;
+    }
+
+    private static boolean homeBrandMatched(String homeBrand) {
+        if (TextUtils.isEmpty(homeBrand)) {
+            return false;
+        }
+        String[] brands = homeBrand.split(";");
+        if (brands.length <= 0) {
+            return false;
+        }
+        String brand = Build.BRAND.toLowerCase();
+        for (String b : brands) {
+            if (TextUtils.isEmpty(b)) {
+                continue;
+            }
+            if (brand.contains(b.toLowerCase())) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }
